@@ -18,11 +18,11 @@
                 <!-- /.box-header -->
                 <div class="box-body">
 
-                    <p class="text-green">1- تعریف وزن و طعم جدید برای محصول. </p>
+                    <p class="text-green">1- افزودن کاربر جدید برای استفاده از امکانات سایت </p>
 
-                    <p class="text-light-blue">2- برای وزن فقط عدد و برای طعم به تعداد زبان های سایت وارد کنید</p>
+                    <p class="text-light-blue">2- وارد کردن ایمیل و پسورد ثبت شده در هاست برای دپارتمان مورد نظر ضروری است</p>
 
-                    <p class="text-red">3- برای تغییر هر کدام از موارد ابتدا آن را حذف و مورد جدید تغییر یافته را اضافه کنید</p>
+                    {{-- <p class="text-red">3- برای تغییر هر کدام از موارد ابتدا آن را حذف و مورد جدید تغییر یافته را اضافه کنید</p> --}}
 
                 </div>
                 <!-- /.box-body -->
@@ -34,36 +34,45 @@
 
         {{-- ============================================ --}}
 
-
-        <!-- weight content -->
-        <div class="col-lg-4 pull-right">
-
-            <div class="box box-primary">
+        <!-- add new user -->
+        <div class="col-md-6">
+            <!-- Horizontal Form -->
+            <div class="box box-info">
                 <div class="box-header with-border">
                     <h3 class="box-title">تعریف کاربر جدید</h3>
                 </div>
-                <div class="box-body">
-                    <div class="row">
-                        <form method="POST" action="{{ route('StoreNewWeight') }}">
-                            @csrf
-                            <div class="col-xs-12">
-                                <input type="email" name="email" class="form-control" required>
+                <!-- /.box-header -->
+                <!-- form start -->
+                <form class="form-horizontal" action="{{ route('StoreNewUser') }}">
+                    @csrf
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label">ایمیل</label>
+
+                            <div class="col-sm-10">
+                                <input name="email" type="email" class="form-control" id="inputEmail3" placeholder="ایمیل">
                             </div>
-                            <br>
-                            <div class="col-xs-12">
-                                <input type="password" name="password" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-2 control-label">رمز عبور</label>
+
+                            <div class="col-sm-10">
+                                <input name="password" type="password" class="form-control" id="inputPassword3" placeholder="رمز عبور">
                             </div>
-                            <br>
-                            <button type="submit" class="btn btn-success">افزودن</button>
-                        </form>
+                        </div>
 
                     </div>
-                </div>
-                <!-- /.box-body -->
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-info pull-right">ورود</button>
+                    </div>
+                    <!-- /.box-footer -->
+                </form>
             </div>
             <!-- /.box -->
 
         </div>
+        <!--/.add new user -->
 
         {{-- ============================================ --}}
 

@@ -168,6 +168,7 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
 
     //Setting=>Add User
     Route::get('/AddUser', [DashboardPageLoader::class, 'AddUser'])->name('ShowAddUserPage');
+    Route::get('/StoreNewUser', [DashboardPageLoader::class, 'StoreNewUser'])->name('StoreNewUser');
 
     //EMail
     // Route::prefix('dep')->group(function () {
