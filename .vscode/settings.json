@@ -1,0 +1,25 @@
+{
+    "files.exclude": {
+        "hajabdollah.code-workspace": false,
+        "Test Workspace.code-workspace": false
+    },
+    "files.watcherExclude": {
+        "d:\\projects\\workspaces\\hajabdollah.code-workspace": true,
+        "d:\\projects\\workspaces\\Test Workspace.code-workspace": true
+    },
+    "workspace.isHidden": false,
+    "projectManager.any.baseFolders": [
+        "d:\\projects"
+    ],
+    "explorer.compactFolders": false,
+    "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?",
+    "workbench.editor.historyBasedLanguageDetection": true,
+    "javascript.inlayHints.enumMemberValues.enabled": true,
+    "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
+    "javascript.inlayHints.parameterTypes.enabled": true,
+    "javascript.inlayHints.variableTypes.enabled": true,
+    "typescript.inlayHints.enumMemberValues.enabled": true,
+    "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+    "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+    "typescript.inlayHints.variableTypes.enabled": true
+}

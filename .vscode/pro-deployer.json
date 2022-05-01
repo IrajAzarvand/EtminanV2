@@ -1,0 +1,22 @@
+{
+    "uploadOnSave": false,
+    "autoDelete": false,
+    "checkGitignore": false,
+    "activeTargets": [
+        "Etminan"
+    ],
+    "concurrency": 5,
+    "ignore": [
+        ".git/**/*",
+        ".vscode/**/*"
+    ],
+    "targets": [{
+        "name": "Etminan",
+        "type": "ftp",
+        "host": "89.39.208.189",
+        "port": 21,
+        "user": "etminani",
+        "password": "TUWG*feT!Vf",
+        "dir": "/et_V2"
+    }]
+}
