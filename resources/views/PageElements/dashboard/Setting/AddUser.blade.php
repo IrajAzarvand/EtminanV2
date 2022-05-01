@@ -47,17 +47,24 @@
                     @csrf
                     <div class="box-body">
                         <div class="form-group">
-                            <label for="inputEmail3" class="col-sm-2 control-label">ایمیل</label>
+                            <label for="inputName" class="col-sm-2 control-label">ایمیل</label>
 
                             <div class="col-sm-10">
-                                <input name="email" type="email" class="form-control" id="inputEmail3" placeholder="ایمیل">
+                                <input name="name" type="text" class="form-control" id="inputName" placeholder="نام" required>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-2 control-label">رمز عبور</label>
+                            <label for="inputEmail" class="col-sm-2 control-label">ایمیل</label>
 
                             <div class="col-sm-10">
-                                <input name="password" type="password" class="form-control" id="inputPassword3" placeholder="رمز عبور">
+                                <input name="email" type="email" class="form-control" id="inputEmail" placeholder="ایمیل" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword" class="col-sm-2 control-label">رمز عبور</label>
+
+                            <div class="col-sm-10">
+                                <input name="password" type="password" class="form-control" id="inputPassword" placeholder="رمز عبور" required>
                             </div>
                         </div>
 
