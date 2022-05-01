@@ -14,6 +14,10 @@ class UserController extends Controller
      */
     public function StoreNewUser(Request $request)
     {
-        dd($request);
+        $validated = $request->validate([
+            'name' => 'required|unique:users|max:100',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:8',
+        ]);
     }
 }
