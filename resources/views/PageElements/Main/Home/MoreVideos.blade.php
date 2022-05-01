@@ -19,16 +19,16 @@
             <div class="container mt-200 mb-200">
                 <div class="row no-gutters align-items-center">
                     <div class="col-lg-6 text-right">
-                        <a target="_blank" href="https://aparat.com/v/ydpiL">
-                            <button class="btn-backgrounds btn-backgrounds_white font__family-montserrat font__weight-bold text-uppercase font__size-13" style="margin-right: -27px;" data-brk-library="component__button">
-                                <span class="text">Play The review</span>
+                        <a target="_blank" href="https://www.aparat.com/v/GVstK">
+                            <button class="btn-backgrounds btn-backgrounds_white font__family-montserrat font__weight-bold text-uppercase font__size-13" data-brk-library="component__button">
+                                <span class="text">Play</span>
                                 <span class="before"><i class="fas fa-caret-right"></i></span>
                             </button>
                         </a>
                     </div>
                     <div class="col-lg-6 text-left pl-50">
-                        <h4 class="font__family-roboto font__size-42 line__height-26 brk-white-font-color font__weight-semibold pt-15">Heading here</h4>
-                        <h3 class="font__family-roboto font__size-16 line__height-30 brk-white-font-color font__weight-light text-uppercase opacity-40">Some subtitle here</h3>
+                        <h4 class="font__family-roboto font__size-42 line__height-26 brk-white-font-color font__weight-semibold pt-15">{{ Dictionary()['MoreVideos'][app()->getLocale()] }}</h4>
+                        {{-- <h3 class="font__family-roboto font__size-16 line__height-30 brk-white-font-color font__weight-light text-uppercase opacity-40">Some subtitle here</h3> --}}
                     </div>
                 </div>
             </div>
