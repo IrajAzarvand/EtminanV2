@@ -31,7 +31,6 @@
                 </ul>
             </li>
 
-
             @foreach (DashboardMenus() as $main => $sub)
                 <li class=" active treeview">
                     <a href="#">

@@ -77,14 +77,10 @@
                         </div>
                     @endforeach
                 @endif
+
             </div>
         </div>
 
-        <div class="text-center">
-            <a href="{{ route('ViewCategories', [1]) }}" class="btn btn-inside-out btn-lg btn-icon-abs border-radius-25 font__family-open-sans font__weight-bold btn-min-width-200" data-brk-library="component__button">
-                <span class="before">{{ Dictionary()['More'][app()->getLocale()] }}</span><span class="text">{{ Dictionary()['More'][app()->getLocale()] }}</span><span class="after">{{ Dictionary()['More'][app()->getLocale()] }}</span>
-            </a>
-        </div>
 
     </div>
 </section>
