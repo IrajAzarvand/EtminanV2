@@ -9,6 +9,7 @@ use App\Models\Weight;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\LocaleContents;
+use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
@@ -175,6 +176,10 @@ class DashboardPageLoader extends Controller
         $Name = Menu('ShowAddUserPage')[0];
         $Section = Menu('ShowAddUserPage')[1];
 
-        return view('PageElements.dashboard.Setting.AddUser', compact('Name', 'Section'));
+        $RoleList = [];
+        $RoleList = Role::all();
+
+
+        return view('PageElements.dashboard.Setting.AddUser', compact('Name', 'Section', 'RoleList'));
     }
 }

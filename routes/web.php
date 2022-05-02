@@ -10,6 +10,7 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\MainWebsitePageLoaderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PtypeController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WeightController;
 
@@ -169,6 +170,7 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
 
     //Setting=>Add User
     Route::get('/AddUser', [DashboardPageLoader::class, 'AddUser'])->name('ShowAddUserPage');
+    Route::get('/AddNewRole', [RoleController::class, 'store'])->name('AddNewRole');
     Route::get('/StoreNewUser', [UserController::class, 'StoreNewUser'])->name('StoreNewUser');
 
     //EMail

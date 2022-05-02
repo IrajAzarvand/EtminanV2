@@ -61,35 +61,35 @@ function DashboardMenus()
         ///////////////////]
         ///////]
 
-        'admin' => [
-            'صفحه اصلی' => [
-                'اسلایدر و المان ها' => 'ShowSliderSettingPage',
-                'درباره ما' => 'ShowAboutUspage',
-                'رویدادها' => 'ShowEventspage',
-            ],
-            'محصولات' => [
-                'تعریف نوع اصلی محصول' => 'ShowPTypepage',
-                'دسته بندی های محصولات' => 'ShowWeightFlavorPage',
-                'افزودن محصول جدید' => 'ShowNewProductPage',
-            ],
-            'گالری تصاویر' => [
-                'گالری تصاویر' => 'ShowGalleryPage',
-
-            ],
-            'تنظیمات' => [
-                'افزودن کاربر' => 'ShowAddUserPage',
-                'Clear Cache' => 'ClearCache',
-                'migrate and refresh' => 'migrate-refresh'
-            ],
+        // 'admin' => [
+        'صفحه اصلی' => [
+            'اسلایدر و المان ها' => 'ShowSliderSettingPage',
+            'درباره ما' => 'ShowAboutUspage',
+            'رویدادها' => 'ShowEventspage',
         ],
-
-        'departments' => [
-            'صفحه اصلی' => [
-                'اسلایدر و المان ها' => 'ShowSliderSettingPage',
-                'درباره ما' => 'ShowAboutUspage',
-                'رویدادها' => 'ShowEventspage',
-            ],
+        'محصولات' => [
+            'تعریف نوع اصلی محصول' => 'ShowPTypepage',
+            'دسته بندی های محصولات' => 'ShowWeightFlavorPage',
+            'افزودن محصول جدید' => 'ShowNewProductPage',
         ],
+        'گالری تصاویر' => [
+            'گالری تصاویر' => 'ShowGalleryPage',
+
+        ],
+        'تنظیمات' => [
+            'افزودن کاربر' => 'ShowAddUserPage',
+            'Clear Cache' => 'ClearCache',
+            'migrate and refresh' => 'migrate-refresh'
+        ],
+        // ],
+
+        // 'departments' => [
+        //     'صفحه اصلی' => [
+        //         'اسلایدر و المان ها' => 'ShowSliderSettingPage',
+        //         'درباره ما' => 'ShowAboutUspage',
+        //         'رویدادها' => 'ShowEventspage',
+        //     ],
+        // ],
     ];
 }
 

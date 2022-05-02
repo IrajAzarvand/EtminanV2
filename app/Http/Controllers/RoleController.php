@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
@@ -35,7 +36,15 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'rolename' => 'required|unique:roles,role_name|max:80',
+        ]);
+
+        DB::table('roles')->insert([
+            'role_name' => $request->input('rolename'),
+        ]);
+
+        return redirect()->back();
     }
 
     /**
