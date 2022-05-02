@@ -50,21 +50,28 @@
                             <label for="inputName" class="col-sm-2 control-label">ایمیل</label>
 
                             <div class="col-sm-10">
-                                <input name="name" type="text" class="form-control" id="inputName" placeholder="نام" required>
+                                <input name="name" value="{{ old('name') }}" type="text" class="form-control" id="inputName" placeholder="نام" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="inputEmail" class="col-sm-2 control-label">ایمیل</label>
 
                             <div class="col-sm-10">
-                                <input name="email" type="email" class="form-control" id="inputEmail" placeholder="ایمیل" required>
+                                <input name="email" value="{{ old('email') }}" type="email" class="form-control" id="inputEmail" placeholder="ایمیل" required>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="inputPassword" class="col-sm-2 control-label">رمز عبور</label>
+                            <label for="Password" class="col-sm-2 control-label">رمز عبور</label>
 
                             <div class="col-sm-10">
-                                <input name="password" type="password" class="form-control" id="inputPassword" placeholder="رمز عبور" required>
+                                <input name="password" value="{{ old('password') }}" type="password" class="form-control" id="Password" placeholder="رمز عبور" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ConfirmPassword" class="col-sm-2 control-label">تکرار رمز عبور</label>
+
+                            <div class="col-sm-10">
+                                <input name="password_confirm" type="password" class="form-control" id="ConfirmPassword" placeholder="تکرار رمز عبور" required>
                             </div>
                         </div>
 
@@ -80,10 +87,12 @@
 
         </div>
         <!--/.add new user -->
+    </div>
+    <!-- /.row (main row) -->
 
-        {{-- ============================================ --}}
-        <!--/validation error for add new user (if any)-->
-
+    {{-- ============================================ --}}
+    <!--/validation error for add new user (if any)-->
+    <div class="col-md-6">
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
@@ -93,20 +102,18 @@
                 </ul>
             </div>
         @endif
-        <!--/ .validation error for add new user (if any)-->
-
-
-
-
-        {{-- ============================================ --}}
-        <!--/ Users List   -->
-
-        <div class="col-lg-9">
-            @livewire('section-setting')
-        </div>
-        <!--/ .Users List   -->
-
-
     </div>
-    <!-- /.row (main row) -->
+    <!--/ .validation error for add new user (if any)-->
+
+
+
+
+    {{-- ============================================ --}}
+    <!--/ Users List   -->
+
+    <div class="col-lg-9">
+        @livewire('section-setting')
+    </div>
+    <!--/ .Users List   -->
+
 @endsection

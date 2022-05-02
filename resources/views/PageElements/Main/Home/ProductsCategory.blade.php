@@ -31,6 +31,7 @@
             {{-- products of ptype --}}
             <div class="brk-shop-grid-filter__items row">
                 @if (last(request()->segments()) == 'index')
+                    {{-- this part is for showing just 12 last added product in index page --}}
                     @foreach ($IndexProducts as $ptype => $products)
                         @foreach ($products as $key => $product)
                             <div class="mb-20 col-xl-3 col-lg-4 col-sm-6 brk-shop-grid-filter__item {{ $product['Ptype_id'] }}">
@@ -54,6 +55,7 @@
                         @endforeach
                     @endforeach
                 @else
+                    {{-- this part is for showing all products when selecting from menu or click more button in category section in index page --}}
                     @foreach ($Products as $key => $product)
                         <div class="mb-20 col-xl-3 col-lg-4 col-sm-6 brk-shop-grid-filter__item {{ $product['Ptype_id'] }}">
                             <div class="bg-white brk-shop-grid-filter-special">
@@ -77,5 +79,12 @@
                 @endif
             </div>
         </div>
+
+        <div class="text-center">
+            <a href="{{ route('ViewCategories', [1]) }}" class="btn btn-inside-out btn-lg btn-icon-abs border-radius-25 font__family-open-sans font__weight-bold btn-min-width-200" data-brk-library="component__button">
+                <span class="before">{{ Dictionary()['More'][app()->getLocale()] }}</span><span class="text">{{ Dictionary()['More'][app()->getLocale()] }}</span><span class="after">{{ Dictionary()['More'][app()->getLocale()] }}</span>
+            </a>
+        </div>
+
     </div>
 </section>
