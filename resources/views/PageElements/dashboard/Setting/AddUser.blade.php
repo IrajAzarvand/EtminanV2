@@ -81,7 +81,7 @@
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
-                        <form role="form" method="POST" action="{{ route('RemoveFlavor') }}">
+                        <form role="form" action="{{ route('RemoveRole') }}">
 
                             <!-- select -->
                             <div class="form-group">
@@ -89,10 +89,10 @@
                                 <br>
 
                                 @csrf
-                                <select name="flavor" class="form-control col-md-6">
+                                <select name="role" class="form-control col-md-6">
                                     <option value="">انتخاب نقش</option>
                                     @foreach ($RoleList as $key => $item)
-                                        <option value="{{ $key }}">{{ $item['role_name'] }}</option>
+                                        <option value="{{ $item['id'] }}">{{ $item['role_name'] }}</option>
                                     @endforeach
                                 </select>
                                 &nbsp; &nbsp;

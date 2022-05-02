@@ -87,8 +87,13 @@ class RoleController extends Controller
      * @param  \App\Models\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Role $role)
+    public function destroy(Request $request)
     {
-        //
+        $SelectedRoleId = $request->input('role');
+        if ($SelectedRoleId) {
+            $role = Role::find($SelectedRoleId);
+            $role->delete();
+        }
+        return redirect()->back();
     }
 }
