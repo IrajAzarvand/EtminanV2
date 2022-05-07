@@ -10,6 +10,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\LocaleContents;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
@@ -179,7 +180,10 @@ class DashboardPageLoader extends Controller
         $RoleList = [];
         $RoleList = Role::all();
 
+        $UsersList = [];
+        $UsersList = User::all();
 
-        return view('PageElements.dashboard.Setting.AddUser', compact('Name', 'Section', 'RoleList'));
+
+        return view('PageElements.dashboard.Setting.AddUser', compact('Name', 'Section', 'RoleList', 'UsersList'));
     }
 }

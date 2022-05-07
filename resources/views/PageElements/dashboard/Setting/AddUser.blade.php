@@ -73,7 +73,6 @@
         <!-- role content -->
         <section>
             <div class="col-md-3">
-
                 <!-- general form elements disabled -->
                 <div class="box box-warning">
                     <div class="box-header with-border">
@@ -152,18 +151,19 @@
                             <label for="ConfirmPassword" class="col-sm-2 control-label">تکرار رمز عبور</label>
 
                             <div class="col-sm-10">
-                                <input name="password_confirm" type="password" class="form-control" id="ConfirmPassword" placeholder="تکرار رمز عبور" required>
+                                <input name="password_confirmation" type="password" class="form-control" id="ConfirmPassword" placeholder="تکرار رمز عبور" required>
                             </div>
                         </div>
+
                         <div class="form-group">
                             <label for="Role" class="col-sm-2 control-label">انتخاب نقش</label>
 
                             <div class="col-sm-10">
-                                <select name="role" id="Role" class="form-control col-md-6">
+                                <select name="role" id="Role" class="form-control col-md-6" required>
                                     <option value="">انتخاب نقش</option>
-                                    {{-- @foreach ($FlavorItems as $key => $item)
-                                        <option value="{{ $key }}">{{ $item }}</option>
-                                    @endforeach --}}
+                                    @foreach ($RoleList as $key => $item)
+                                        <option value="{{ $item['id'] }}">{{ $item['role_name'] }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -184,7 +184,7 @@
 
         {{-- ============================================ --}}
 
-        <!-- Flavor content -->
+        <!-- users list -->
         <section>
             <div class="col-md-3">
 
@@ -195,7 +195,7 @@
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
-                        <form role="form" method="POST" action="{{ route('RemoveFlavor') }}">
+                        <form role="form" action="{{ route('RemoveUser') }}">
 
                             <!-- select -->
                             <div class="form-group">
@@ -203,11 +203,11 @@
                                 <br>
 
                                 @csrf
-                                <select name="flavor" class="form-control col-md-6">
+                                <select name="user" class="form-control col-md-6">
                                     <option value="">انتخاب کاربر</option>
-                                    {{-- @foreach ($FlavorItems as $key => $item)
-                                        <option value="{{ $key }}">{{ $item }}</option>
-                                    @endforeach --}}
+                                    @foreach ($UsersList as $key => $item)
+                                        <option value="{{ $item['id'] }}">{{ $item['name'] }}</option>
+                                    @endforeach
                                 </select>
                                 &nbsp; &nbsp;
                                 <button type="submit" class="btn btn-danger">حذف</button>
@@ -222,7 +222,7 @@
             </div>
             <!-- /.row -->
         </section>
-        <!-- /.flavor content -->
+        <!-- /.users list -->
 
     </div>
     <!-- /.row (main row) -->

@@ -232,10 +232,10 @@ function Dictionary()
         ],
 
         'AllRightsReserved' => [
-            'FA' => 'تمامی حقوق محفوظ است.',
-            'EN' => 'All Rights Reserved',
-            'RU' => 'Все права защищены',
-            'AR' => 'كل الحقوق محفوظة',
+            'FA' => 'تمامی حقوق محفوظ است، طراحی و اجرا واحد انفورماتیک شرکت بستنی اطمینان.',
+            'EN' => 'All rights reserved, design and developed by IT department of Etminan Ice Cream Company',
+            'RU' => 'Все права защищены, дизайн и разработка отдела ИТ компании Etminan Ice Cream Company.',
+            'AR' => 'جميع الحقوق محفوظة ، تصميم وتطوير قسم تقنية المعلومات بشركة Etminan Ice Cream',
         ],
 
         'Address' => [

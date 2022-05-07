@@ -173,6 +173,7 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
     Route::get('/AddNewRole', [RoleController::class, 'store'])->name('AddNewRole');
     Route::get('/RemoveRole', [RoleController::class, 'destroy'])->name('RemoveRole');
     Route::get('/StoreNewUser', [UserController::class, 'StoreNewUser'])->name('StoreNewUser');
+    Route::get('/RemoveUser', [UserController::class, 'destroy'])->name('RemoveUser');
 
     //EMail
     // Route::prefix('dep')->group(function () {
