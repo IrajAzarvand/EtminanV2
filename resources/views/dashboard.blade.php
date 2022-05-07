@@ -45,7 +45,10 @@
             <!-- Main content -->
             <section class="content">
                 <!-- Small boxes (Stat box) -->
-                @include('PageElements.dashboard.Shared.StatBoxes')
+
+                @if (Auth::user()->role_id == 1)
+                    @include('PageElements.dashboard.Shared.StatBoxes')
+                @endif
 
                 <!-- Main Contents -->
                 @yield('contents')

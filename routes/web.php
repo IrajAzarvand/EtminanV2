@@ -7,12 +7,14 @@ use App\Http\Controllers\DashboardPageLoader;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\FlavorController;
 use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\MainWebsitePageLoaderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PtypeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WeightController;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -176,7 +178,5 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
     Route::get('/RemoveUser', [UserController::class, 'destroy'])->name('RemoveUser');
 
     //EMail
-    // Route::prefix('dep')->group(function () {
-    //     Route::get('/Mail', [DashboardPageLoader::class, 'AboutUs'])->name('ShowAboutUspage');
-    // });
+    Route::get('/Email', [MailController::class, 'index'])->name('ShowEmailPage');
 });

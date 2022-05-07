@@ -14,7 +14,10 @@ class MailController extends Controller
      */
     public function index()
     {
-        //
+        $Name = Menu('ShowEmailPage')[0];
+        $Section = Menu('ShowEmailPage')[1];
+
+        return view('PageElements.dashboard.Setting.Email', compact('Name', 'Section'));
     }
 
     /**
