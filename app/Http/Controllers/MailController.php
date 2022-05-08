@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\mail;
+use App\Mail\SendMail;
+// use App\Models\mail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 
 class MailController extends Controller
@@ -17,8 +19,34 @@ class MailController extends Controller
         $Name = Menu('ShowEmailPage')[0];
         $Section = Menu('ShowEmailPage')[1];
 
-        return view('PageElements.dashboard.Setting.Email', compact('Name', 'Section'));
+        return view('PageElements.dashboard.Mail.Email', compact('Name', 'Section'));
     }
+
+    /**
+     * Send Message of contact us form to company email.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function SendCUMessage(Request $request)
+    {
+        $validated = $request->validate([
+            'FNAME' => 'required|max:25',
+            'EMAIL' => 'required|email',
+            'SUBJECT' => 'required',
+            'MESSAGE' => 'required',
+        ]);
+
+        $data = array(
+            'name' => $request->input('FNAME'),
+            'email' => $request->input('EMAIL'),
+            'subject' => $request->input('SUBJECT'),
+            'message' => $request->input('MESSAGE'),
+        );
+
+        Mail::to('info@etminan.net')->send(new SendMail($data));
+        return back()->with('success', 'Thanks for contacting us!');
+    }
+
 
     /**
      * Show the form for creating a new resource.

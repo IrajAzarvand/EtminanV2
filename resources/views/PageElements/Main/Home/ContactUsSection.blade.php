@@ -345,7 +345,8 @@
 
         <div class="container" @if (SiteLang()[app()->getLocale()]['rtl']) dir="rtl" @else dir="ltr" @endif>
             <h2 class="brk-white-font-color font__family-montserrat font__size-56 line__height-60 text-uppercase text-center mb-xs-20 mb-40">{{ Dictionary()['ContactUs'][app()->getLocale()] }} </h2>
-            <form action="#" class="brk-subscribe-mail brk-form brk-form-strict brk-form_footer-9" data-brk-library="component__form,recaptcha">
+            <form action="{{ route('SendContacUsMessage') }}" method="POST" class="brk-form brk-form-strict brk-form_footer-9" data-brk-library="component__form,recaptcha">
+                @csrf
                 <div class="row">
                     <div class="col-12 col-lg-4">
                         <input type="text" placeholder="{{ Dictionary()['Name'][app()->getLocale()] }}" name="FNAME">
@@ -359,7 +360,7 @@
                     </div>
                     <div class="col-12">
                         <div class="text-center">
-                            <button class="btn btn-inside-out btn-md btn-inside-out-invert border-radius-25 letter-spacing-100 btn-no-shadow font__weight-normal mt-40" data-brk-library="component__button">
+                            <button type="submit" class="btn btn-inside-out btn-md btn-inside-out-invert border-radius-25 letter-spacing-100 btn-no-shadow font__weight-normal mt-40">
                                 <span class="before">{{ Dictionary()['Send'][app()->getLocale()] }}</span><span class="text">{{ Dictionary()['Send'][app()->getLocale()] }}</span><span class="after">{{ Dictionary()['Send'][app()->getLocale()] }}</span>
                             </button>
                         </div>
