@@ -66,6 +66,10 @@ Route::get('/locale/{langsymbol}', [MainWebsitePageLoaderController::class, 'Set
 Route::get('/Gallery', [MainWebsitePageLoaderController::class, 'Gallery'])->name('Gallery');
 
 
+//=======================================================================
+//Contact Us
+Route::post('/SendCUMessage', [MailController::class, 'SendCUMessage'])->name('SendContacUsMessage');
+
 
 
 
@@ -83,9 +87,9 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
         Artisan::call('route:clear');
         Artisan::call('route:cache');
         echo 'route cache done.';
-        // Artisan::call('config:clear');
-        // Artisan::call('config:cache');
-        // echo 'config cache done.';
+        Artisan::call('config:clear');
+        Artisan::call('config:cache');
+        echo 'config cache done.';
         Artisan::call('view:clear');
         Artisan::call('view:cache');
         echo 'view cache done.';
