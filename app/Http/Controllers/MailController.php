@@ -34,6 +34,7 @@ class MailController extends Controller
             'EMAIL' => 'required|email',
             'SUBJECT' => 'required',
             'MESSAGE' => 'required',
+            'mtcaptcha-verifiedtoken' => 'required'
         ]);
 
         $data = array(
