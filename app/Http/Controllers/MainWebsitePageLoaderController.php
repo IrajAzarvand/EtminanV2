@@ -54,6 +54,59 @@ class MainWebsitePageLoaderController extends Controller
     //Main Website
     public function IndexPage()
     {
+        // dd(request()->getHost());
+        // $envpath = base_path('.env');
+        // dd($envpath);
+        // if (file_exists($envpath)) {
+        //     if (request()->getHost() == 'etminan-icecream.com') {
+        //         file_put_contents(app()->environmentFilePath(), str_replace(
+        //             env('RECAPTCHA_SITE_KEY'),
+        //             'RECAPTCHA_SITE_KEY' . '=' . 'MTPublic-bVcrTAPNk',
+        //             file_get_contents(app()->environmentFilePath())
+
+        //         ));
+        //         file_put_contents(app()->environmentFilePath(), str_replace(
+        //             env('RECAPTCHA_SECRET_KEY'),
+        //             'RECAPTCHA_SECRET_KEY' . '=' . 'MTPrivat-bVcrTAPNk-2Z9EUCOPTKBWhzm7PoCUpnCieZ7NgWez3yISK3Z4L1A3nKsE6Y',
+        //             file_get_contents(app()->environmentFilePath())
+
+        //         ));
+
+
+
+        //         // file_put_contents($envpath, str_replace(
+        //         //     'RECAPTCHA_SITE_KEY' . '=' . 'MTPublic-bVcrTAPNk',
+        //         //     'RECAPTCHA_SECRET_KEY' . '=' . 'MTPrivat-bVcrTAPNk-2Z9EUCOPTKBWhzm7PoCUpnCieZ7NgWez3yISK3Z4L1A3nKsE6Y',
+        //         //     file_get_contents($envpath)
+        //         // ));
+        //     } elseif (request()->getHost() == 'etminan.net') {
+        //         file_put_contents(app()->environmentFilePath(), str_replace(
+        //             env('RECAPTCHA_SITE_KEY'),
+        //             'RECAPTCHA_SITE_KEY' . '=' . 'MTPublic-WgOjDYDxk',
+        //             file_get_contents(app()->environmentFilePath())
+
+        //         ));
+        //         file_put_contents(app()->environmentFilePath(), str_replace(
+        //             env('RECAPTCHA_SECRET_KEY'),
+        //             'RECAPTCHA_SECRET_KEY' . '=' . 'MTPrivat-WgOjDYDxk-CjH656T3bAjEOpQH2wm9PE1QTqg7pW4Ow0Ks5TLxSiQaVgypJG',
+        //             file_get_contents(app()->environmentFilePath())
+
+        //         ));
+
+
+
+
+
+
+        //         // file_put_contents($envpath, str_replace(
+        //         //     'RECAPTCHA_SITE_KEY' . '=' . 'MTPublic-WgOjDYDxk',
+        //         //     'RECAPTCHA_SECRET_KEY' . '=' . 'MTPrivat-WgOjDYDxk-CjH656T3bAjEOpQH2wm9PE1QTqg7pW4Ow0Ks5TLxSiQaVgypJG',
+        //         //     file_get_contents($envpath)
+        //         // ));
+        //     }
+        // }
+
+
         // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
         //about us section
         //about us picture or video

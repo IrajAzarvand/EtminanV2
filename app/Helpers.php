@@ -315,3 +315,7 @@ function Dictionary()
 
     ];
 }
+
+
+
+// Mail section functions

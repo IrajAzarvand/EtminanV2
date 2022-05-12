@@ -349,21 +349,40 @@
                 @csrf
                 <div class="row">
                     <div class="col-12 col-lg-4">
-                        <input type="text" placeholder="{{ Dictionary()['Name'][app()->getLocale()] }}" name="FNAME">
-                        <input type="text" placeholder="{{ Dictionary()['Email'][app()->getLocale()] }}" name="EMAIL">
-                        <input type="text" placeholder="{{ Dictionary()['Subject'][app()->getLocale()] }}" name="SUBJECT">
+                        <input type="text" value="{{ old('FNAME') }}" placeholder="{{ Dictionary()['Name'][app()->getLocale()] }}" name="FNAME">
+                        @if ($errors->has('FNAME'))
+                            <br>
+                            <p class="alert alert-danger"> 'وارد کردن نام الزامی است'</p>
+                        @endif
+                        <input type="text" value="{{ old('EMAIL') }}" placeholder="{{ Dictionary()['Email'][app()->getLocale()] }}" name="EMAIL">
+                        @if ($errors->has('EMAIL'))
+                            <br>
+                            <p class="alert alert-danger"> 'وارد کردن ایمیل الزامی است'</p>
+                        @endif
+                        <input type="text" value="{{ old('SUBJECT') }}" placeholder="{{ Dictionary()['Subject'][app()->getLocale()] }}" name="SUBJECT">
+                        @if ($errors->has('SUBJECT'))
+                            <br>
+                            <p class="alert alert-danger"> 'وارد کردن موضوع الزامی است'</p>
+                        @endif
+
                     </div>
                     <div class="col-12 col-lg-8">
                         <div class="brk-form__textarea-container">
-                            <textarea name="MESSAGE" id="footer9" placeholder="{{ Dictionary()['Message'][app()->getLocale()] }}"></textarea>
+                            <textarea name="MESSAGE" id="footer9" placeholder="{{ Dictionary()['Message'][app()->getLocale()] }}">{{ old('MESSAGE') }}</textarea>
                         </div>
+                        @if ($errors->has('MESSAGE'))
+                            <br>
+                            <p class="alert alert-danger"> 'وارد کردن پیام الزامی است'</p>
+                        @endif
                     </div>
 
-
-
-                    <div name='mtcaptcha' class="mtcaptcha"></div>
-
-
+                    <div class="mtcaptcha"></div>
+                    <div class="col-12 col-lg-2">
+                        @if ($errors->has('mtcaptcha-verifiedtoken'))
+                            <br>
+                            <p class="alert alert-danger"> 'تکمیل کپچا الزامی است'</p>
+                        @endif
+                    </div>
                     <div class="col-12">
                         <div class="text-center">
                             <button type="submit" class="mt-40 btn btn-inside-out btn-md btn-inside-out-invert border-radius-25 letter-spacing-100 btn-no-shadow font__weight-normal">
@@ -375,5 +394,6 @@
             </form>
         </div>
     </div>
+
 
 </div>
