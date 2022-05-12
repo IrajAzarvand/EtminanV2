@@ -127,7 +127,7 @@
                     @csrf
                     <div class="box-body">
                         <div class="form-group">
-                            <label for="inputName" class="col-sm-2 control-label">ایمیل</label>
+                            <label for="inputName" class="col-sm-2 control-label">نام</label>
 
                             <div class="col-sm-10">
                                 <input name="name" value="{{ old('name') }}" type="text" class="form-control" id="inputName" placeholder="نام" required>

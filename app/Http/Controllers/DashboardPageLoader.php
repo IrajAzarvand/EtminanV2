@@ -19,13 +19,7 @@ class DashboardPageLoader extends Controller
 
     public function dashboard()
     {
-
-        // if (Auth::user()->email == 'admin@admin.com') {
-
         return view('PageElements.dashboard.Setting.index');
-        // } else {
-        //     echo 'this is not the admin user';
-        // }
     }
 
 

@@ -3,6 +3,7 @@
 use App\Models\Ptype;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
 /**
  *
@@ -319,3 +320,32 @@ function Dictionary()
 
 
 // Mail section functions
+function LoggedinUser()
+{
+    $user = Auth::user();
+    return $user;
+}
+
+function UserMail($Command)
+{
+    $MailServer = 'mail.etminan.net';
+    $MailAddress = Auth::user()->email;
+    $MailPass = Crypt::decryptString(Auth::user()->mailpass);
+
+
+    switch ($Command) {
+        case 'GetInboxMailList':
+            // dd($MailAddress, $MailPass);
+            $mbox = imap_open("{" . $MailServer . ":993/imap/ssl}INBOX", "$MailAddress", "$MailPass");
+            $MC = imap_check($mbox);
+
+            // Fetch an overview for all messages in INBOX
+            $result = imap_fetch_overview($mbox, "1:{$MC->Nmsgs}", 0);
+            return $result;
+            break;
+
+            // default:
+            //     # code...
+            //     break;
+    }
+}
