@@ -109,7 +109,6 @@
                                             </td>
                                             <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
                                             <td class="mailbox-date">{{ $Mail->date }}</td>
-                                            <td class="mailbox-date">{{ $Mail->udate }}</td>
                                         </tr>
                                     @endforeach
 
