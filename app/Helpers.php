@@ -318,30 +318,141 @@ function Dictionary()
 }
 
 
-
+//================================================================
 // Mail section functions
-function LoggedinUser()
+
+function RootInfo()
 {
-    $user = Auth::user();
-    return $user;
+    $RootInfo['MailServer'] = 'mail.etminan.net';
+    $RootInfo['MailAddress'] = Auth::user()->email;
+    $RootInfo['MailPass'] = Crypt::decryptString(Auth::user()->mailpass);
+    return $RootInfo;
 }
+
+function ImapConnection($Folder = '')
+{
+    $Folder ? $RequestedFolder = 'INBOX.' . $Folder : $RequestedFolder = 'INBOX';
+    //Connect to mailbox folder
+    $mbox = imap_open("{" . RootInfo()['MailServer'] . ":993/imap/ssl}" . $RequestedFolder, RootInfo()['MailAddress'], RootInfo()['MailPass']);
+    return $mbox;
+}
+
+function CollectFolderMailsNumber()
+{
+    $UnreadMsgs = [];
+    //Get main list items
+    $list = imap_list(ImapConnection(), "{" .  RootInfo()['MailServer'] . "}", "*");
+    foreach ($list as $item) {
+        //get name of folder
+        $Name = preg_split("/[}.]/", $item);
+        $FolderName = end($Name);
+
+        // Check inbox and spam folders
+        if ($FolderName == 'INBOX' || $FolderName == 'spam') {
+            $MC = imap_check(ImapConnection($FolderName));
+
+            // Fetch an reverse sort of overview for all messages in $Folder, default is INBOX
+            $AllMailsInFolder = imap_fetch_overview(ImapConnection(), "1:{$MC->Nmsgs}", 0);
+            //set unread message for each folder =0
+            $UnreadMsgs[$FolderName] = 0;
+
+            if ($AllMailsInFolder) {
+                // if emails exist if folder, check to see if theres unseen mail inside mailbox or no
+                foreach ($AllMailsInFolder as $mail) {
+                    //if unseen mail found, add one to folder unread mail count
+                    if (!$mail->seen) {
+                        $UnreadMsgs[$FolderName]++;
+                    }
+                }
+            }
+        }
+    }
+
+    return $UnreadMsgs;
+}
+
+//get emails of each folder that user click on it
+function ConnectToFolder($Folder = '')
+{
+    // Check current mailbox
+    $MC = imap_check(ImapConnection($Folder));
+    // Fetch an reverse sort of overview for all messages in $Folder, default is INBOX
+    $result = imap_fetch_overview(ImapConnection(), "1:{$MC->Nmsgs}", 0);
+
+
+    imap_close(ImapConnection());
+    return $result;
+}
+
+function UTF8Decoder(string $TextToDecode)
+{
+
+    $text = imap_mime_header_decode($TextToDecode);
+
+    $result = '';
+
+    for ($i = 0; $i < count($text); $i++) {
+
+        switch ($text[$i]->charset) {
+            case 'iso-8859-1':
+                //latin text encoding
+                $text[$i]->text = utf8_encode($text[$i]->text);
+                break;
+
+            case 'windows-1256':
+                $text[$i]->text = iconv('WINDOWS-1256', 'UTF-8', $text[$i]->text);
+                break;
+        }
+
+        $result .= $text[$i]->text;
+
+        $result = trim(preg_replace('/\s+/', ' ', $result));
+    }
+    return $result;
+}
+
+// //devide name and email address of sender to 2 sectoin to show in inbox list and reply section
+// //raw info is look like SENDERNAME <SENDER EMAIL>
+function SenderInfo(string $SenderInfo)
+{
+    $SenderInfo = array_values(array_filter(preg_split("/[<>]/", $SenderInfo)));
+    if ($SenderInfo) {
+        $SenderInfo['name'] = isset($SenderInfo[0]) ? UTF8Decoder($SenderInfo[0]) : 'NO NAME';
+        $SenderInfo['email'] = isset($SenderInfo[1]) ? UTF8Decoder($SenderInfo[1]) : $SenderInfo['name'];
+    }
+    return $SenderInfo;
+}
+
+// //collect number of emails in each
 
 function UserMail($Command)
 {
-    $MailServer = 'mail.etminan.net';
-    $MailAddress = Auth::user()->email;
-    $MailPass = Crypt::decryptString(Auth::user()->mailpass);
-
-
     switch ($Command) {
-        case 'GetInboxMailList':
-            // dd($MailAddress, $MailPass);
-            $mbox = imap_open("{" . $MailServer . ":993/imap/ssl}INBOX", "$MailAddress", "$MailPass");
-            $MC = imap_check($mbox);
 
-            // Fetch an overview for all messages in INBOX
-            $result = imap_fetch_overview($mbox, "1:{$MC->Nmsgs}", 0);
-            return $result;
+
+        case 'GetInboxMailList':
+
+            $MailInfo = [];
+            // get mailbox emails in reverse order
+            $INBOX = array_reverse(ConnectToFolder(), true);
+
+            foreach ($INBOX as $key => $Item) {
+
+                // fix showing of elements, subject, mail body, from,...
+                if ($Item->subject == "") {
+                    $Item->subject = "(No Subject)";
+                } else {
+                    $Item->subject = UTF8Decoder($Item->subject);
+                }
+                $Item->from = SenderInfo(UTF8Decoder($Item->from))['email'];
+            }
+            return $INBOX;
+            break;
+
+        case 'GetSentMailList':
+
+            $INBOX = ConnectToFolder();
+            return $INBOX;
             break;
 
             // default:

@@ -20,14 +20,13 @@ class MailController extends Controller
     {
         $Name = Menu('ShowEmailPage')[0];
         $Section = Menu('ShowEmailPage')[1];
-        // cpanel mail token: 1NQUSSVUX23MWVJN9TXODFR2I6L80FO7
 
+        $MailInbox = UserMail('GetInboxMailList');
 
-
-
-        UserMail('GetInboxMailList');
-
-        return view('PageElements.dashboard.Mail.Email', compact('Name', 'Section'));
+        return view(
+            'PageElements.dashboard.Mail.Email',
+            compact('Name', 'Section', 'MailInbox')
+        );
     }
 
     /**

@@ -24,10 +24,10 @@
                     <div class="box-body no-padding">
                         <ul class="nav nav-pills nav-stacked">
                             <li class="active"><a href="#"><i class="fa fa-inbox"></i> ابنباکس
-                                    <span class="label label-primary pull-left">12</span></a></li>
+                                    <span class="label label-primary pull-left">{{ CollectFolderMailsNumber()['INBOX'] }}</span></a></li>
                             <li><a href="#"><i class="fa fa-envelope-o"></i> ارسال شده</a></li>
                             <li><a href="#"><i class="fa fa-file-text-o"></i> پیش نویس</a></li>
-                            <li><a href="#"><i class="fa fa-filter"></i> هرزنامه <span class="label label-warning pull-left">65</span></a>
+                            <li><a href="#"><i class="fa fa-filter"></i> هرزنامه <span class="label label-warning pull-left">{{ CollectFolderMailsNumber()['spam'] }}</span></a>
                             </li>
                             <li><a href="#"><i class="fa fa-trash-o"></i> سطح زباله</a></li>
                         </ul>
@@ -97,7 +97,24 @@
                         <div class="table-responsive mailbox-messages">
                             <table class="table table-hover table-striped">
                                 <tbody>
-                                    <tr>
+                                    @foreach ($MailInbox as $key => $Mail)
+                                        <tr>
+                                            <td><input type="checkbox"></td>
+                                            <td class="mailbox-star"><a href="#"><i class="fa fa-star-o text-yellow"></i></a></td>
+                                            <td class="mailbox-name"><a href="read-mail.html">{{ $Mail->from }}</a></td>
+                                            <td class="mailbox-subject">
+                                                @if (!$Mail->seen)
+                                                    <b>{{ $Mail->subject }}</b>@else{{ $Mail->subject }}
+                                                @endif
+                                            </td>
+                                            <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
+                                            <td class="mailbox-date">{{ $Mail->date }}</td>
+                                            <td class="mailbox-date">{{ $Mail->udate }}</td>
+                                        </tr>
+                                    @endforeach
+
+
+                                    {{-- <tr>
                                         <td><input type="checkbox"></td>
                                         <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
                                         <td class="mailbox-name"><a href="read-mail.html">علیرضا حسینی زاده</a></td>
@@ -114,124 +131,8 @@
                                         </td>
                                         <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
                                         <td class="mailbox-date">28 دقیقه پیش</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox"></td>
-                                        <td class="mailbox-star"><a href="#"><i class="fa fa-star-o text-yellow"></i></a></td>
-                                        <td class="mailbox-name"><a href="read-mail.html">علیرضا حسینی زاده</a></td>
-                                        <td class="mailbox-subject"><b>تایید سفارش</b> - لورم ایپسوم متن ساختگی برای استفاده طراحان گرافیک است.
-                                        </td>
-                                        <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                                        <td class="mailbox-date">11 ساعت پیش</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox"></td>
-                                        <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
-                                        <td class="mailbox-name"><a href="read-mail.html">علیرضا حسینی زاده</a></td>
-                                        <td class="mailbox-subject"><b>تایید سفارش</b> - لورم ایپسوم متن ساختگی برای استفاده طراحان گرافیک است.
-                                        </td>
-                                        <td class="mailbox-attachment"></td>
-                                        <td class="mailbox-date">15 ساعت پیش</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox"></td>
-                                        <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
-                                        <td class="mailbox-name"><a href="read-mail.html">علیرضا حسینی زاده</a></td>
-                                        <td class="mailbox-subject"><b>تایید سفارش</b> - لورم ایپسوم متن ساختگی برای استفاده طراحان گرافیک است.
-                                        </td>
-                                        <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                                        <td class="mailbox-date">دیروز</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox"></td>
-                                        <td class="mailbox-star"><a href="#"><i class="fa fa-star-o text-yellow"></i></a></td>
-                                        <td class="mailbox-name"><a href="read-mail.html">علیرضا حسینی زاده</a></td>
-                                        <td class="mailbox-subject"><b>تایید سفارش</b> - لورم ایپسوم متن ساختگی برای استفاده طراحان گرافیک است.
-                                        </td>
-                                        <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                                        <td class="mailbox-date">2 روز پیش</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox"></td>
-                                        <td class="mailbox-star"><a href="#"><i class="fa fa-star-o text-yellow"></i></a></td>
-                                        <td class="mailbox-name"><a href="read-mail.html">علیرضا حسینی زاده</a></td>
-                                        <td class="mailbox-subject"><b>تایید سفارش</b> - لورم ایپسوم متن ساختگی برای استفاده طراحان گرافیک است.
-                                        </td>
-                                        <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                                        <td class="mailbox-date">2 روز پیش</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox"></td>
-                                        <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
-                                        <td class="mailbox-name"><a href="read-mail.html">علیرضا حسینی زاده</a></td>
-                                        <td class="mailbox-subject"><b>تایید سفارش</b> - لورم ایپسوم متن ساختگی برای استفاده طراحان گرافیک است.
-                                        </td>
-                                        <td class="mailbox-attachment"></td>
-                                        <td class="mailbox-date">2 روز پیش</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox"></td>
-                                        <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
-                                        <td class="mailbox-name"><a href="read-mail.html">علیرضا حسینی زاده</a></td>
-                                        <td class="mailbox-subject"><b>تایید سفارش</b> - لورم ایپسوم متن ساختگی برای استفاده طراحان گرافیک است.
-                                        </td>
-                                        <td class="mailbox-attachment"></td>
-                                        <td class="mailbox-date">2 روز پیش</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox"></td>
-                                        <td class="mailbox-star"><a href="#"><i class="fa fa-star-o text-yellow"></i></a></td>
-                                        <td class="mailbox-name"><a href="read-mail.html">علیرضا حسینی زاده</a></td>
-                                        <td class="mailbox-subject"><b>تایید سفارش</b> - لورم ایپسوم متن ساختگی برای استفاده طراحان گرافیک است.
-                                        </td>
-                                        <td class="mailbox-attachment"></td>
-                                        <td class="mailbox-date">2 روز پیش</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox"></td>
-                                        <td class="mailbox-star"><a href="#"><i class="fa fa-star-o text-yellow"></i></a></td>
-                                        <td class="mailbox-name"><a href="read-mail.html">علیرضا حسینی زاده</a></td>
-                                        <td class="mailbox-subject"><b>تایید سفارش</b> - لورم ایپسوم متن ساختگی برای استفاده طراحان گرافیک است.
-                                        </td>
-                                        <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                                        <td class="mailbox-date">4 روز پیش</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox"></td>
-                                        <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
-                                        <td class="mailbox-name"><a href="read-mail.html">علیرضا حسینی زاده</a></td>
-                                        <td class="mailbox-subject"><b>تایید سفارش</b> - لورم ایپسوم متن ساختگی برای استفاده طراحان گرافیک است.
-                                        </td>
-                                        <td class="mailbox-attachment"></td>
-                                        <td class="mailbox-date">12 روز پیش</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox"></td>
-                                        <td class="mailbox-star"><a href="#"><i class="fa fa-star-o text-yellow"></i></a></td>
-                                        <td class="mailbox-name"><a href="read-mail.html">علیرضا حسینی زاده</a></td>
-                                        <td class="mailbox-subject"><b>تایید سفارش</b> - لورم ایپسوم متن ساختگی برای استفاده طراحان گرافیک است.
-                                        </td>
-                                        <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                                        <td class="mailbox-date">12 روز پیش</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox"></td>
-                                        <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
-                                        <td class="mailbox-name"><a href="read-mail.html">علیرضا حسینی زاده</a></td>
-                                        <td class="mailbox-subject"><b>تایید سفارش</b> - لورم ایپسوم متن ساختگی برای استفاده طراحان گرافیک است.
-                                        </td>
-                                        <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                                        <td class="mailbox-date">14 روز پیش</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox"></td>
-                                        <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
-                                        <td class="mailbox-name"><a href="read-mail.html">علیرضا حسینی زاده</a></td>
-                                        <td class="mailbox-subject"><b>تایید سفارش</b> - لورم ایپسوم متن ساختگی برای استفاده طراحان گرافیک است.
-                                        </td>
-                                        <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                                        <td class="mailbox-date">15 روز پیش</td>
-                                    </tr>
+                                    </tr> --}}
+
                                 </tbody>
                             </table>
                             <!-- /.table -->

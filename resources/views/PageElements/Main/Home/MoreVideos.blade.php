@@ -19,7 +19,7 @@
             <div class="container mt-200 mb-200">
                 <div class="row no-gutters align-items-center">
                     <div class="col-lg-6 text-right">
-                        <a target="_blank" href="https://www.aparat.com/v/GVstK">
+                        <a target="_blank" href="https://www.aparat.com/ADV.Etminan">
                             <button class="btn-backgrounds btn-backgrounds_white font__family-montserrat font__weight-bold text-uppercase font__size-13" data-brk-library="component__button">
                                 <span class="text">Play</span>
                                 <span class="before"><i class="fas fa-caret-right"></i></span>
