@@ -423,7 +423,8 @@ function SenderInfo(string $SenderInfo)
     return $SenderInfo;
 }
 
-// //collect number of emails in each
+
+//collect number of emails in each
 
 function UserMail($Command)
 {
@@ -442,9 +443,9 @@ function UserMail($Command)
                 if ($Item->subject == "") {
                     $Item->subject = "(No Subject)";
                 } else {
-                    $Item->subject = UTF8Decoder($Item->subject);
+                    $Item->subject = mb_substr(UTF8Decoder($Item->subject), 0, 40);
                 }
-                $Item->from = SenderInfo(UTF8Decoder($Item->from))['email'];
+                $Item->from = mb_substr(SenderInfo(UTF8Decoder($Item->from))['name'], 0, 20);
             }
             return $INBOX;
             break;

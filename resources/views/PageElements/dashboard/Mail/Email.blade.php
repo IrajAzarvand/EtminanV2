@@ -85,7 +85,7 @@
                             <!-- /.btn-group -->
                             <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
                             <div class="pull-left">
-                                1-50/200
+                                1-50/{{ count($MailInbox) }}
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
                                     <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button>
@@ -155,7 +155,7 @@
                             <!-- /.btn-group -->
                             <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
                             <div class="pull-left">
-                                1-50/200
+                                1-50/{{ count($MailInbox) }}
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
                                     <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button>
