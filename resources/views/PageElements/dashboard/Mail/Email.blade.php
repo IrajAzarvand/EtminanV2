@@ -85,10 +85,16 @@
                             <!-- /.btn-group -->
                             <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
                             <div class="pull-left">
-                                1-50/{{ count($MailInbox) }}
+
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
-                                    <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button>
+                                    {{ $MailInbox->perPage() * $MailInbox->currentPage() - $MailInbox->perPage() + 1 }} - @if ($MailInbox->perPage() * $MailInbox->currentPage() > $MailInbox->total())
+                                        {{ $MailInbox->total() }}
+                                    @else
+                                        {{ $MailInbox->perPage() * $MailInbox->currentPage() }}
+                                    @endif
+
+                                    {{-- <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button> --}}
+                                    {{-- <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button> --}}
                                 </div>
                                 <!-- /.btn-group -->
                             </div>
@@ -154,10 +160,68 @@
                             <!-- /.btn-group -->
                             <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
                             <div class="pull-left">
-                                1-50/{{ count($MailInbox) }}
+
+                                {{ $MailInbox->perPage() * $MailInbox->currentPage() - $MailInbox->perPage() + 1 }} - @if ($MailInbox->perPage() * $MailInbox->currentPage() > $MailInbox->total())
+                                    {{ $MailInbox->total() }}
+                                @else
+                                    {{ $MailInbox->perPage() * $MailInbox->currentPage() }}
+                                @endif
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
-                                    <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button>
+
+                                    @if ($MailInbox->hasPages())
+                                        {{-- @dd($MailInbox->perPage()) --}}
+                                        <ul class="pager">
+
+                                            @if ($MailInbox->onFirstPage())
+                                                <li class="disabled"><span>
+                                                        < قبلی</span>
+                                                </li>
+                                            @else
+                                                <li><a href="{{ $MailInbox->previousPageUrl() }}" rel="prev">
+                                                        < قبلی</a>
+                                                </li>
+                                            @endif
+
+
+
+                                            @foreach ($MailInbox->links()->elements as $element)
+                                                @if (is_string($element))
+                                                    <li class="disabled"><span>{{ $element }}</span></li>
+                                                @endif
+
+
+
+                                                @if (is_array($element))
+                                                    @foreach ($element as $page => $url)
+                                                        @if ($page == $MailInbox->currentPage())
+                                                            <li class="active my-active"><span>{{ $page }}</span></li>
+                                                        @else
+                                                            <li><a href="{{ $url }}">{{ $page }}</a></li>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
+                                            @endforeach
+
+
+
+                                            @if ($MailInbox->hasMorePages())
+                                                <li><a href="{{ $MailInbox->nextPageUrl() }}" rel="next">بعدی > </a>
+                                                </li>
+                                            @else
+                                                <li class="disabled"><span>بعدی > </span>
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    @endif
+
+
+
+
+
+
+
+                                    {{-- <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
+                                    <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button> --}}
                                 </div>
                                 <!-- /.btn-group -->
                             </div>
@@ -174,4 +238,7 @@
     <!-- /.content -->
     {{-- </div> --}}
     <!-- /.content-wrapper -->
+    {{-- @if ($MailInbox->hasPages())
+        @dd($MailInbox->links())
+    @endif --}}
 @endsection

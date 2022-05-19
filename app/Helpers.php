@@ -3,6 +3,7 @@
 use Carbon\Carbon;
 use App\Models\Ptype;
 use Illuminate\Support\Arr;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
@@ -434,7 +435,6 @@ function UserMail($Command)
     switch ($Command) {
 
         case 'GetInboxMailList':
-            // dd($persian->to_date('1983/03/20', 'Y/m/d'));
             // get mailbox emails in reverse order
             $INBOX = array_reverse(ConnectToFolder(), true);
 
@@ -450,11 +450,11 @@ function UserMail($Command)
                 //DATE
                 //remove (UTC) parentheses from the end of item date to easily detect by carbon
                 $Item->date = array_values(array_filter(preg_split("/[()]/", $Item->date)))[0];
-
+                //convert mail date to jalali
                 $Item->date = $persian->to_date(Carbon::parse($Item->date)->format('Y/m/d'), 'Y/m/d');
             }
-            // dd($dte);
-            // dd(Carbon::parse("Tue, 17 May 2022 10:50:05 +0400")->format('Y/m/d'));
+
+            $INBOX = paginate($INBOX, 20);
             return $INBOX;
             break;
 
@@ -473,15 +473,26 @@ function UserMail($Command)
 
 
 
+// //Paginate the results
+function paginate($items, $perPage)
+{
+    if (is_array($items)) {
+        $items = collect($items);
+    }
 
-
+    return new Illuminate\Pagination\LengthAwarePaginator(
+        $items->forPage(Paginator::resolveCurrentPage(), $perPage),
+        $items->count(),
+        $perPage,
+        Paginator::resolveCurrentPage(),
+        ['path' => Paginator::resolveCurrentPath()]
+    );
+}
 
 
 
 
 //Persian Date Converter
-
-
 class persian_date
 {
 
@@ -659,16 +670,4 @@ class persian_date
             '-' . $gregorian_date[1] .
             '-' . $gregorian_date[2];
     }
-
-    // function sec_to_day($sec)
-    // {
-    //     $day[s] = bcmod($sec - time(), 60);
-    //     if (strlen($day[s]) == 1) $day[s] = '0' . $day[s];
-    //     $day[m] = bcmod(bcdiv($sec - time(), 60), 60);
-    //     if (strlen($day[m]) == 1) $day[m] = '0' . $day[m];
-    //     $day[h] = bcmod(bcdiv(bcdiv($sec - time(), 60), 60), 24);
-    //     if (strlen($day[h]) == 1) $day[h] = '0' . $day[h];
-    //     $day[d] = bcdiv(bcdiv(bcdiv($sec - time(), 60), 60), 24);
-    //     return $day;
-    // }
 }
