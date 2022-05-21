@@ -339,25 +339,27 @@ function ImapConnection($Folder = '')
     return $mbox;
 }
 
+
+
+//collect number of emails in each
 function CollectFolderMailsNumber()
 {
     $UnreadMsgs = [];
     //Get main list items
     $list = imap_list(ImapConnection(), "{" .  RootInfo()['MailServer'] . "}", "*");
     foreach ($list as $item) {
+
         //get name of folder
         $Name = preg_split("/[}.]/", $item);
         $FolderName = end($Name);
-
         // Check inbox and spam folders
         if ($FolderName == 'INBOX' || $FolderName == 'spam') {
             $MC = imap_check(ImapConnection($FolderName));
 
             // Fetch an reverse sort of overview for all messages in $Folder, default is INBOX
-            $AllMailsInFolder = imap_fetch_overview(ImapConnection(), "1:{$MC->Nmsgs}", 0);
+            $AllMailsInFolder = imap_fetch_overview(ImapConnection($FolderName), "1:{$MC->Nmsgs}", 0);
             //set unread message for each folder =0
             $UnreadMsgs[$FolderName] = 0;
-
             if ($AllMailsInFolder) {
                 // if emails exist if folder, check to see if theres unseen mail inside mailbox or no
                 foreach ($AllMailsInFolder as $mail) {
@@ -369,7 +371,6 @@ function CollectFolderMailsNumber()
             }
         }
     }
-
     return $UnreadMsgs;
 }
 
@@ -379,7 +380,7 @@ function ConnectToFolder($Folder = '')
     // Check current mailbox
     $MC = imap_check(ImapConnection($Folder));
     // Fetch an reverse sort of overview for all messages in $Folder, default is INBOX
-    $result = imap_fetch_overview(ImapConnection(), "1:{$MC->Nmsgs}", 0);
+    $result = imap_fetch_overview(ImapConnection($Folder), "1:{$MC->Nmsgs}", 0);
 
 
     imap_close(ImapConnection());
@@ -426,7 +427,6 @@ function SenderInfo(string $SenderInfo)
 }
 
 
-//collect number of emails in each
 
 function UserMail($Command)
 {
@@ -458,10 +458,29 @@ function UserMail($Command)
             return $INBOX;
             break;
 
-        case 'GetSentMailList':
+        case 'GetSpamMailList':
 
-            $INBOX = ConnectToFolder();
-            return $INBOX;
+            // get mailbox emails in reverse order
+            $SPAM = array_reverse(ConnectToFolder('spam'), true);
+
+            foreach ($SPAM as $key => $Item) {
+                // fix showing of elements, subject, mail body, from,...
+                if ($Item->subject == "") {
+                    $Item->subject = "(No Subject)";
+                } else {
+                    $Item->subject = mb_substr(UTF8Decoder($Item->subject), 0, 80);
+                }
+                $Item->from = mb_substr(SenderInfo(UTF8Decoder($Item->from))['name'], 0, 30);
+
+                //DATE
+                //remove (UTC) parentheses from the end of item date to easily detect by carbon
+                $Item->date = array_values(array_filter(preg_split("/[()]/", $Item->date)))[0];
+                //convert mail date to jalali
+                $Item->date = $persian->to_date(Carbon::parse($Item->date)->format('Y/m/d'), 'Y/m/d');
+            }
+
+            $SPAM = paginate($SPAM, 20);
+            return $SPAM;
             break;
 
             // default:

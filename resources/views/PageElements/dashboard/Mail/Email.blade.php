@@ -9,57 +9,14 @@
     <!-- Main content -->
     <section class="content">
         <div class="row">
-            <div class="col-md-3">
-                <a href="compose.html" class="btn btn-primary btn-block margin-bottom">ارسال ایمیل جدید</a>
 
-                <div class="box box-solid">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">پوشه ها</h3>
+            @include('PageElements.dashboard.Mail.MailSideMenu')
 
-                        <div class="box-tools">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="box-body no-padding">
-                        <ul class="nav nav-pills nav-stacked">
-                            <li class="active"><a href="#"><i class="fa fa-inbox"></i> ابنباکس
-                                    <span class="label label-primary pull-left">{{ CollectFolderMailsNumber()['INBOX'] }}</span></a></li>
-                            <li><a href="#"><i class="fa fa-envelope-o"></i> ارسال شده</a></li>
-                            <li><a href="#"><i class="fa fa-file-text-o"></i> پیش نویس</a></li>
-                            <li><a href="#"><i class="fa fa-filter"></i> هرزنامه <span class="label label-warning pull-left">{{ CollectFolderMailsNumber()['spam'] }}</span></a>
-                            </li>
-                            <li><a href="#"><i class="fa fa-trash-o"></i> سطح زباله</a></li>
-                        </ul>
-                    </div>
-                    <!-- /.box-body -->
-                </div>
-                <!-- /. box -->
-                <div class="box box-solid">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">برچسب ها</h3>
 
-                        <div class="box-tools">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="box-body no-padding">
-                        <ul class="nav nav-pills nav-stacked">
-                            <li><a href="#"><i class="fa fa-circle-o text-red"></i> مهم</a></li>
-                            <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> شخصی</a></li>
-                            <li><a href="#"><i class="fa fa-circle-o text-light-blue"></i> شبکه های اجتماعی</a></li>
-                        </ul>
-                    </div>
-                    <!-- /.box-body -->
-                </div>
-                <!-- /.box -->
-            </div>
-            <!-- /.col -->
             <div class="col-md-9">
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title">اینباکس</h3>
+                        <h3 class="box-title">{{ $MailboxName }}</h3>
 
                         <div class="box-tools pull-right">
                             <div class="has-feedback">
@@ -87,10 +44,10 @@
                             <div class="pull-left">
 
                                 <div class="btn-group">
-                                    {{ $MailInbox->perPage() * $MailInbox->currentPage() - $MailInbox->perPage() + 1 }} - @if ($MailInbox->perPage() * $MailInbox->currentPage() > $MailInbox->total())
-                                        {{ $MailInbox->total() }}
+                                    {{ $Mailbox->perPage() * $Mailbox->currentPage() - $Mailbox->perPage() + 1 }} - @if ($Mailbox->perPage() * $Mailbox->currentPage() > $Mailbox->total())
+                                        {{ $Mailbox->total() }}
                                     @else
-                                        {{ $MailInbox->perPage() * $MailInbox->currentPage() }}
+                                        {{ $Mailbox->perPage() * $Mailbox->currentPage() }}
                                     @endif
 
                                     {{-- <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button> --}}
@@ -103,7 +60,7 @@
                         <div class="table-responsive mailbox-messages">
                             <table class="table table-hover table-striped">
                                 <tbody>
-                                    @foreach ($MailInbox as $key => $Mail)
+                                    @foreach ($Mailbox as $key => $Mail)
                                         <tr>
                                             <td><input type="checkbox"></td>
                                             <td class="mailbox-star"><a href="#"><i class="fa fa-star-o text-yellow"></i></a></td>
@@ -161,30 +118,29 @@
                             <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
                             <div class="pull-left">
 
-                                {{ $MailInbox->perPage() * $MailInbox->currentPage() - $MailInbox->perPage() + 1 }} - @if ($MailInbox->perPage() * $MailInbox->currentPage() > $MailInbox->total())
-                                    {{ $MailInbox->total() }}
+                                {{ $Mailbox->perPage() * $Mailbox->currentPage() - $Mailbox->perPage() + 1 }} - @if ($Mailbox->perPage() * $Mailbox->currentPage() > $Mailbox->total())
+                                    {{ $Mailbox->total() }}
                                 @else
-                                    {{ $MailInbox->perPage() * $MailInbox->currentPage() }}
+                                    {{ $Mailbox->perPage() * $Mailbox->currentPage() }}
                                 @endif
                                 <div class="btn-group">
 
-                                    @if ($MailInbox->hasPages())
-                                        {{-- @dd($MailInbox->perPage()) --}}
+                                    @if ($Mailbox->hasPages())
                                         <ul class="pager">
 
-                                            @if ($MailInbox->onFirstPage())
+                                            @if ($Mailbox->onFirstPage())
                                                 <li class="disabled"><span>
                                                         < قبلی</span>
                                                 </li>
                                             @else
-                                                <li><a href="{{ $MailInbox->previousPageUrl() }}" rel="prev">
+                                                <li><a href="{{ $Mailbox->previousPageUrl() }}" rel="prev">
                                                         < قبلی</a>
                                                 </li>
                                             @endif
 
 
 
-                                            @foreach ($MailInbox->links()->elements as $element)
+                                            @foreach ($Mailbox->links()->elements as $element)
                                                 @if (is_string($element))
                                                     <li class="disabled"><span>{{ $element }}</span></li>
                                                 @endif
@@ -193,7 +149,7 @@
 
                                                 @if (is_array($element))
                                                     @foreach ($element as $page => $url)
-                                                        @if ($page == $MailInbox->currentPage())
+                                                        @if ($page == $Mailbox->currentPage())
                                                             <li class="active my-active"><span>{{ $page }}</span></li>
                                                         @else
                                                             <li><a href="{{ $url }}">{{ $page }}</a></li>
@@ -204,8 +160,8 @@
 
 
 
-                                            @if ($MailInbox->hasMorePages())
-                                                <li><a href="{{ $MailInbox->nextPageUrl() }}" rel="next">بعدی > </a>
+                                            @if ($Mailbox->hasMorePages())
+                                                <li><a href="{{ $Mailbox->nextPageUrl() }}" rel="next">بعدی > </a>
                                                 </li>
                                             @else
                                                 <li class="disabled"><span>بعدی > </span>

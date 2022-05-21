@@ -16,18 +16,56 @@ class MailController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($Folder = '')
+    {
+
+        switch ($Folder) {
+            case 'spam':
+                $MailboxName = 'هرزنامه';
+
+                $Mailbox = UserMail('GetSpamMailList');
+
+                break;
+
+            default:
+                //by default for initial load of mail page, the inbox folder will show to user
+                $MailboxName = 'اینباکس';
+                $Mailbox = UserMail('GetInboxMailList');
+                break;
+        }
+        $Name = Menu('ShowEmailPage')[0];
+        $Section = Menu('ShowEmailPage')[1];
+
+        return view(
+            'PageElements.dashboard.Mail.Email',
+            compact('Name', 'Section', 'MailboxName', 'Mailbox')
+        );
+    }
+
+
+
+
+    /**
+     * Display selected mailbox by user.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function Mailbox()
     {
         $Name = Menu('ShowEmailPage')[0];
         $Section = Menu('ShowEmailPage')[1];
 
-        $MailInbox = UserMail('GetInboxMailList');
+        $Mailbox = UserMail('GetInboxMailList');
+        // $Mailbox = UserMail('GetSpamMailList');
 
         return view(
             'PageElements.dashboard.Mail.Email',
-            compact('Name', 'Section', 'MailInbox')
+            compact('Name', 'Section', 'Mailbox')
         );
     }
+
+
+
 
     /**
      * Send Message of contact us form to company email.

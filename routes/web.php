@@ -181,6 +181,8 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
     Route::get('/StoreNewUser', [UserController::class, 'StoreNewUser'])->name('StoreNewUser');
     Route::get('/RemoveUser', [UserController::class, 'destroy'])->name('RemoveUser');
 
+    //Mailbox Routes
+    //=======================================================================
     //EMail
-    Route::get('/Email', [MailController::class, 'index'])->name('ShowEmailPage');
+    Route::get('/Email/Mailbox/{Folder?}', [MailController::class, 'index'])->name('ShowEmailPage');
 });
