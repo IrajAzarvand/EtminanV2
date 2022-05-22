@@ -185,4 +185,5 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
     //=======================================================================
     //EMail
     Route::get('/Email/Mailbox/{Folder?}', [MailController::class, 'index'])->name('ShowEmailPage');
+    Route::get('/Email/showMsgBody/{Folder?}/{Msg_uid?}', [MailController::class, 'MailBody'])->name('ShowMsgbody');
 });

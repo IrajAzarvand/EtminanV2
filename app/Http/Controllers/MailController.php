@@ -18,21 +18,11 @@ class MailController extends Controller
      */
     public function index($Folder = '')
     {
+        $Folder ? $MailboxName = $Folder : $MailboxName = 'INBOX';
 
-        switch ($Folder) {
-            case 'spam':
-                $MailboxName = 'هرزنامه';
+        $Mailbox = UserMail($Folder);
 
-                $Mailbox = UserMail('GetSpamMailList');
 
-                break;
-
-            default:
-                //by default for initial load of mail page, the inbox folder will show to user
-                $MailboxName = 'اینباکس';
-                $Mailbox = UserMail('GetInboxMailList');
-                break;
-        }
         $Name = Menu('ShowEmailPage')[0];
         $Section = Menu('ShowEmailPage')[1];
 
@@ -45,22 +35,27 @@ class MailController extends Controller
 
 
 
+
+
     /**
      * Display selected mailbox by user.
      *
      * @return \Illuminate\Http\Response
      */
-    public function Mailbox()
+    public function MailBody($Folder = '', $Msg_uid)
     {
+
+        $Folder ? $MailboxName = $Folder : $MailboxName = 'INBOX';
+
+        $MailBody = ReadMailBody($Folder, $Msg_uid);
+
+
+
         $Name = Menu('ShowEmailPage')[0];
         $Section = Menu('ShowEmailPage')[1];
-
-        $Mailbox = UserMail('GetInboxMailList');
-        // $Mailbox = UserMail('GetSpamMailList');
-
         return view(
-            'PageElements.dashboard.Mail.Email',
-            compact('Name', 'Section', 'Mailbox')
+            'PageElements.dashboard.Mail.MailBody',
+            compact('Name', 'Section', 'MailboxName', 'Msg_uid', 'MailBody')
         );
     }
 

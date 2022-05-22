@@ -427,67 +427,253 @@ function SenderInfo(string $SenderInfo)
 }
 
 
-
-function UserMail($Command)
+//read messages list inside each folder that user selects
+function UserMail($Folder)
 {
     $persian = new persian_date();
 
-    switch ($Command) {
+    // get mailbox emails in reverse order
+    $MailBox = array_reverse(ConnectToFolder($Folder), true);
 
-        case 'GetInboxMailList':
-            // get mailbox emails in reverse order
-            $INBOX = array_reverse(ConnectToFolder(), true);
+    foreach ($MailBox as $key => $Item) {
 
-            foreach ($INBOX as $key => $Item) {
-                // fix showing of elements, subject, mail body, from,...
-                if ($Item->subject == "") {
-                    $Item->subject = "(No Subject)";
-                } else {
-                    $Item->subject = mb_substr(UTF8Decoder($Item->subject), 0, 80);
+        // fix showing of elements, subject, mail body, from,...
+        if (!isset($Item->subject) || ($Item->subject == "")) {
+            $Item->subject = "(No Subject)";
+        } else {
+            $Item->subject = mb_substr(UTF8Decoder($Item->subject), 0, 80);
+        }
+        if (isset($Item->to)) {
+
+            $Item->to = mb_substr(SenderInfo(UTF8Decoder($Item->to))['name'], 0, 30);
+        }
+        $Item->from = mb_substr(SenderInfo(UTF8Decoder($Item->from))['name'], 0, 30);
+
+        //DATE
+        //remove (UTC) parentheses from the end of item date to easily detect by carbon
+        $Item->date = array_values(array_filter(preg_split("/[()]/", $Item->date)))[0];
+        //convert mail date to jalali
+        $Item->date = $persian->to_date(Carbon::parse($Item->date)->format('Y/m/d'), 'Y/m/d');
+    }
+
+    $MailBox = paginate($MailBox, 20);
+    DetectMailAttachments($MailBox, $Folder);
+
+    return $MailBox;
+}
+
+//check each message if it has attachments or no
+function DetectMailAttachments($Emails, $Folder)
+{
+    // $attachments = array();
+
+    foreach ($Emails as $id => $message) {
+        $message->MailHasAttachment = 0;
+        $msgno = imap_msgno(ImapConnection($Folder), $message->uid);
+        $structure = imap_fetchstructure(ImapConnection($Folder), $msgno);
+        if (isset($structure->parts) && count($structure->parts)) {
+            for ($i = 0; $i < count($structure->parts); $i++) {
+                if ($structure->parts[$i]->ifdparameters) {
+                    foreach ($structure->parts[$i]->dparameters as $object) {
+                        if (strtolower($object->attribute) == 'filename') {
+                            //file has attachments
+                            $message->MailHasAttachment = 1;
+                        }
+                    }
                 }
-                $Item->from = mb_substr(SenderInfo(UTF8Decoder($Item->from))['name'], 0, 30);
 
-                //DATE
-                //remove (UTC) parentheses from the end of item date to easily detect by carbon
-                $Item->date = array_values(array_filter(preg_split("/[()]/", $Item->date)))[0];
-                //convert mail date to jalali
-                $Item->date = $persian->to_date(Carbon::parse($Item->date)->format('Y/m/d'), 'Y/m/d');
-            }
-
-            $INBOX = paginate($INBOX, 20);
-            return $INBOX;
-            break;
-
-        case 'GetSpamMailList':
-
-            // get mailbox emails in reverse order
-            $SPAM = array_reverse(ConnectToFolder('spam'), true);
-
-            foreach ($SPAM as $key => $Item) {
-                // fix showing of elements, subject, mail body, from,...
-                if ($Item->subject == "") {
-                    $Item->subject = "(No Subject)";
-                } else {
-                    $Item->subject = mb_substr(UTF8Decoder($Item->subject), 0, 80);
+                if ($structure->parts[$i]->ifparameters) {
+                    foreach ($structure->parts[$i]->parameters as $object) {
+                        if (strtolower($object->attribute) == 'name') {
+                            //file has attachments
+                            $message->MailHasAttachment = 1;
+                        }
+                    }
                 }
-                $Item->from = mb_substr(SenderInfo(UTF8Decoder($Item->from))['name'], 0, 30);
 
-                //DATE
-                //remove (UTC) parentheses from the end of item date to easily detect by carbon
-                $Item->date = array_values(array_filter(preg_split("/[()]/", $Item->date)))[0];
-                //convert mail date to jalali
-                $Item->date = $persian->to_date(Carbon::parse($Item->date)->format('Y/m/d'), 'Y/m/d');
+                // $attachments[$i] = array(
+                //     'is_attachment' => false,
+                //     'filename' => '',
+                //     'name' => '',
+                //     'attachment' => ''
+                // );
+
+                // if ($structure->parts[$i]->ifdparameters) {
+                //     foreach ($structure->parts[$i]->dparameters as $object) {
+                //         if (strtolower($object->attribute) == 'filename') {
+                //             $message->MailHasAttachment = 1;
+                //             $attachments[$i]['is_attachment'] = true;
+                //             $attachments[$i]['filename'] = $object->value;
+                //         }
+                //     }
+                // }
+
+                // if ($structure->parts[$i]->ifparameters) {
+                //     foreach ($structure->parts[$i]->parameters as $object) {
+                //         if (strtolower($object->attribute) == 'name') {
+                //             $message->MailHasAttachment = 1;
+                //             $attachments[$i]['is_attachment'] = true;
+                //             $attachments[$i]['name'] = $object->value;
+                //         }
+                //     }
+                // }
+
+                // if ($attachments[$i]['is_attachment']) {
+                //     $attachments[$i]['attachment'] = imap_fetchbody(ImapConnection($Folder), $msgno, $i + 1);
+                //     if ($structure->parts[$i]->encoding == 3) { // 3 = BASE64
+                //         $attachments[$i]['attachment'] = base64_decode($attachments[$i]['attachment']);
+                //     } elseif ($structure->parts[$i]->encoding == 4) { // 4 = QUOTED-PRINTABLE
+                //         $attachments[$i]['attachment'] = quoted_printable_decode($attachments[$i]['attachment']);
+                //     }
+                // }
             }
+        }
+    }
 
-            $SPAM = paginate($SPAM, 20);
-            return $SPAM;
-            break;
 
-            // default:
-            //     # code...
-            //     break;
+
+
+    // $HasAttachment = 0;
+    // foreach ($attachments as $attachment) {
+    //     if ($attachment['is_attachment']) {
+    //         $HasAttachment = 1;
+    //     }
+    // }
+
+    // return [$HasAttachment];
+}
+
+
+function ReadMailBody($Folder, $Msg_Uid)
+{
+
+    $messageNumber = imap_msgno(ImapConnection($Folder), $Msg_Uid);
+    $structure = imap_fetchstructure(ImapConnection($Folder), $messageNumber);
+    $flattenedParts = flattenParts($structure->parts);
+
+    foreach ($flattenedParts as $partNumber => $part) {
+
+        switch ($part->type) {
+
+            case 0:
+                // the HTML or plain text part of the email
+                $message = getPart(ImapConnection($Folder), $messageNumber, $partNumber, $part->encoding);
+                // now do something with the message, e.g. render it
+                break;
+
+            case 1:
+                // multi-part headers, can ignore
+
+                break;
+            case 2:
+                // attached message headers, can ignore
+                break;
+
+            case 3: // application
+            case 4: // audio
+            case 5: // image
+            case 6: // video
+            case 7: // other
+                $filename = getFilenameFromPart($part);
+                if ($filename) {
+                    // it's an attachment
+                    $attachment = getPart(ImapConnection($Folder), $messageNumber, $partNumber, $part->encoding);
+                    // now do something with the attachment, e.g. save it somewhere
+                } else {
+                    // don't know what it is
+                }
+                break;
+        }
+    }
+    return [$message, $attachment];
+}
+
+
+
+
+function flattenParts($messageParts, $flattenedParts = array(), $prefix = '', $index = 1, $fullPrefix = true)
+{
+
+    foreach ($messageParts as $part) {
+        $flattenedParts[$prefix . $index] = $part;
+        if (isset($part->parts)) {
+            if ($part->type == 2) {
+                $flattenedParts = flattenParts($part->parts, $flattenedParts, $prefix . $index . '.', 0, false);
+            } elseif ($fullPrefix) {
+                $flattenedParts = flattenParts($part->parts, $flattenedParts, $prefix . $index . '.');
+            } else {
+                $flattenedParts = flattenParts($part->parts, $flattenedParts, $prefix);
+            }
+            unset($flattenedParts[$prefix . $index]->parts);
+        }
+        $index++;
+    }
+
+    return $flattenedParts;
+}
+
+
+
+
+
+
+
+function getPart($connection, $messageNumber, $partNumber, $encoding)
+{
+
+    $data = imap_fetchbody($connection, $messageNumber, $partNumber);
+    switch ($encoding) {
+        case 0:
+            return $data; // 7BIT
+        case 1:
+            return $data; // 8BIT
+        case 2:
+            return $data; // BINARY
+        case 3:
+            return base64_decode($data); // BASE64
+        case 4:
+            return quoted_printable_decode($data); // QUOTED_PRINTABLE
+        case 5:
+            return $data; // OTHER
     }
 }
+
+function getFilenameFromPart($part)
+{
+
+    $filename = '';
+
+    if ($part->ifdparameters) {
+        foreach ($part->dparameters as $object) {
+            if (strtolower($object->attribute) == 'filename') {
+                $filename = $object->value;
+            }
+        }
+    }
+
+    if (!$filename && $part->ifparameters) {
+        foreach ($part->parameters as $object) {
+            if (strtolower($object->attribute) == 'name') {
+                $filename = $object->value;
+            }
+        }
+    }
+
+    return $filename;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -499,13 +685,14 @@ function paginate($items, $perPage)
         $items = collect($items);
     }
 
-    return new Illuminate\Pagination\LengthAwarePaginator(
-        $items->forPage(Paginator::resolveCurrentPage(), $perPage),
-        $items->count(),
-        $perPage,
-        Paginator::resolveCurrentPage(),
-        ['path' => Paginator::resolveCurrentPath()]
-    );
+    return
+        new Illuminate\Pagination\LengthAwarePaginator(
+            $items->forPage(Paginator::resolveCurrentPage(), $perPage),
+            $items->count(),
+            $perPage,
+            Paginator::resolveCurrentPage(),
+            ['path' => Paginator::resolveCurrentPath()]
+        );
 }
 
 
