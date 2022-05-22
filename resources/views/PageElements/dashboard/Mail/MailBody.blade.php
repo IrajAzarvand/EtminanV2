@@ -42,9 +42,24 @@
                 <!-- /.mailbox-read-message -->
             </div>
             <!-- /.box-body -->
-            {{-- <div class="box-footer">
+            <div class="box-footer">
                 <ul class="mailbox-attachments clearfix">
-                    <li>
+                    @foreach ($MailBody[1] as $attachment)
+                        @if ($attachment['is_attachment'])
+                            <li>
+                                <span class="mailbox-attachment-icon"><i class="fa fa-file-pdf-o"></i></span>
+
+                                <div class="mailbox-attachment-info">
+                                    <a href="#" class="mailbox-attachment-name"><i class="fa fa-paperclip"></i> {{ $attachment['name'] }}</a>
+                                    <span class="mailbox-attachment-size">
+                                        1,245 KB
+                                        <a href="#" class="btn btn-default btn-xs pull-left"><i class="fa fa-cloud-download"></i></a>
+                                    </span>
+                                </div>
+                            </li>
+                        @endif
+                    @endforeach
+                    {{-- <li>
                         <span class="mailbox-attachment-icon"><i class="fa fa-file-pdf-o"></i></span>
 
                         <div class="mailbox-attachment-info">
@@ -65,8 +80,8 @@
                                 <a href="#" class="btn btn-default btn-xs pull-left"><i class="fa fa-cloud-download"></i></a>
                             </span>
                         </div>
-                    </li>
-                    <li>
+                    </li> --}}
+                    {{-- <li>
                         <span class="mailbox-attachment-icon has-img"><img src="../../dist/img/photo1.png" alt="Attachment"></span>
 
                         <div class="mailbox-attachment-info">
@@ -87,9 +102,9 @@
                                 <a href="#" class="btn btn-default btn-xs pull-left"><i class="fa fa-cloud-download"></i></a>
                             </span>
                         </div>
-                    </li>
+                    </li> --}}
                 </ul>
-            </div> --}}
+            </div>
             <!-- /.box-footer -->
             <div class="box-footer">
                 <div class="pull-right">

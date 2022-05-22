@@ -465,7 +465,6 @@ function UserMail($Folder)
 //check each message if it has attachments or no
 function DetectMailAttachments($Emails, $Folder)
 {
-    // $attachments = array();
 
     foreach ($Emails as $id => $message) {
         $message->MailHasAttachment = 0;
@@ -490,57 +489,9 @@ function DetectMailAttachments($Emails, $Folder)
                         }
                     }
                 }
-
-                // $attachments[$i] = array(
-                //     'is_attachment' => false,
-                //     'filename' => '',
-                //     'name' => '',
-                //     'attachment' => ''
-                // );
-
-                // if ($structure->parts[$i]->ifdparameters) {
-                //     foreach ($structure->parts[$i]->dparameters as $object) {
-                //         if (strtolower($object->attribute) == 'filename') {
-                //             $message->MailHasAttachment = 1;
-                //             $attachments[$i]['is_attachment'] = true;
-                //             $attachments[$i]['filename'] = $object->value;
-                //         }
-                //     }
-                // }
-
-                // if ($structure->parts[$i]->ifparameters) {
-                //     foreach ($structure->parts[$i]->parameters as $object) {
-                //         if (strtolower($object->attribute) == 'name') {
-                //             $message->MailHasAttachment = 1;
-                //             $attachments[$i]['is_attachment'] = true;
-                //             $attachments[$i]['name'] = $object->value;
-                //         }
-                //     }
-                // }
-
-                // if ($attachments[$i]['is_attachment']) {
-                //     $attachments[$i]['attachment'] = imap_fetchbody(ImapConnection($Folder), $msgno, $i + 1);
-                //     if ($structure->parts[$i]->encoding == 3) { // 3 = BASE64
-                //         $attachments[$i]['attachment'] = base64_decode($attachments[$i]['attachment']);
-                //     } elseif ($structure->parts[$i]->encoding == 4) { // 4 = QUOTED-PRINTABLE
-                //         $attachments[$i]['attachment'] = quoted_printable_decode($attachments[$i]['attachment']);
-                //     }
-                // }
             }
         }
     }
-
-
-
-
-    // $HasAttachment = 0;
-    // foreach ($attachments as $attachment) {
-    //     if ($attachment['is_attachment']) {
-    //         $HasAttachment = 1;
-    //     }
-    // }
-
-    // return [$HasAttachment];
 }
 
 
@@ -551,6 +502,57 @@ function ReadMailBody($Folder, $Msg_Uid)
     $structure = imap_fetchstructure(ImapConnection($Folder), $messageNumber);
     $flattenedParts = flattenParts($structure->parts);
 
+
+
+    //ATTACHMENTS
+    $attachments = array();
+    if (isset($structure->parts) && count($structure->parts)) {
+
+        for ($i = 0; $i < count($structure->parts); $i++) {
+
+            $attachments[$i] = array(
+                'is_attachment' => false,
+                'filename' => '',
+                'name' => '',
+                'attachment' => ''
+            );
+
+            if ($structure->parts[$i]->ifdparameters) {
+                foreach ($structure->parts[$i]->dparameters as $object) {
+                    if (strtolower($object->attribute) == 'filename') {
+                        $attachments[$i]['is_attachment'] = true;
+                        $attachments[$i]['filename'] = UTF8Decoder($object->value);
+                    }
+                }
+            }
+
+            if ($structure->parts[$i]->ifparameters) {
+                foreach ($structure->parts[$i]->parameters as $object) {
+                    if (strtolower($object->attribute) == 'name') {
+                        $attachments[$i]['is_attachment'] = true;
+                        $attachments[$i]['name'] = UTF8Decoder($object->value);
+                    }
+                }
+            }
+
+            if ($attachments[$i]['is_attachment']) {
+                $attachments[$i]['attachment'] = imap_fetchbody(ImapConnection($Folder), $messageNumber, $i + 1);
+                if ($structure->parts[$i]->encoding == 3) { // 3 = BASE64
+                    $attachments[$i]['attachment'] = base64_decode($attachments[$i]['attachment']);
+                } elseif ($structure->parts[$i]->encoding == 4) { // 4 = QUOTED-PRINTABLE
+                    $attachments[$i]['attachment'] = quoted_printable_decode($attachments[$i]['attachment']);
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+
+    //READ MESSAGE BODY
     foreach ($flattenedParts as $partNumber => $part) {
 
         switch ($part->type) {
@@ -585,7 +587,7 @@ function ReadMailBody($Folder, $Msg_Uid)
                 break;
         }
     }
-    return [$message, $attachment];
+    return [$message, $attachments];
 }
 
 
@@ -659,7 +661,7 @@ function getFilenameFromPart($part)
         }
     }
 
-    return $filename;
+    return UTF8Decoder($filename);
 }
 
 
