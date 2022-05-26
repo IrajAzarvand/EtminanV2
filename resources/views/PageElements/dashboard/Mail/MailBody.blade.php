@@ -44,6 +44,7 @@
             <!-- /.box-body -->
             <div class="box-footer">
                 <ul class="mailbox-attachments clearfix">
+                    @dd($MailBody)
                     @foreach ($MailBody[1] as $attachment)
                         @if ($attachment['is_attachment'])
                             <li>

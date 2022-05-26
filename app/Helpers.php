@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use SebastianBergmann\Type\TypeName;
 
 /**
  *
@@ -341,7 +342,7 @@ function ImapConnection($Folder = '')
 
 
 
-//collect number of emails in each
+//collect number of unread emails in each mailbox
 function CollectFolderMailsNumber()
 {
     $UnreadMsgs = [];
@@ -379,7 +380,7 @@ function ConnectToFolder($Folder = '')
 {
     // Check current mailbox
     $MC = imap_check(ImapConnection($Folder));
-    // Fetch an reverse sort of overview for all messages in $Folder, default is INBOX
+    // Fetch and reverse sort of overview for all messages in $Folder, default is INBOX
     $result = imap_fetch_overview(ImapConnection($Folder), "1:{$MC->Nmsgs}", 0);
 
 
@@ -427,7 +428,7 @@ function SenderInfo(string $SenderInfo)
 }
 
 
-//read messages list inside each folder that user selects
+//read messages list inside each mailbox that user selects
 function UserMail($Folder)
 {
     $persian = new persian_date();
@@ -497,185 +498,51 @@ function DetectMailAttachments($Emails, $Folder)
 
 function ReadMailBody($Folder, $Msg_Uid)
 {
+    $MessageNumber = imap_msgno(ImapConnection($Folder), $Msg_Uid);
+    $structure = imap_fetchstructure(ImapConnection($Folder), $MessageNumber);
 
-    $messageNumber = imap_msgno(ImapConnection($Folder), $Msg_Uid);
-    $structure = imap_fetchstructure(ImapConnection($Folder), $messageNumber);
-    $flattenedParts = flattenParts($structure->parts);
+    $imap = ImapConnection($Folder);
 
 
-
-    //ATTACHMENTS
-    $attachments = array();
     if (isset($structure->parts) && count($structure->parts)) {
-
-        for ($i = 0; $i < count($structure->parts); $i++) {
-
-            $attachments[$i] = array(
-                'is_attachment' => false,
-                'filename' => '',
-                'name' => '',
-                'attachment' => ''
-            );
-
-            if ($structure->parts[$i]->ifdparameters) {
-                foreach ($structure->parts[$i]->dparameters as $object) {
-                    if (strtolower($object->attribute) == 'filename') {
-                        $attachments[$i]['is_attachment'] = true;
-                        $attachments[$i]['filename'] = UTF8Decoder($object->value);
-                    }
-                }
-            }
-
-            if ($structure->parts[$i]->ifparameters) {
-                foreach ($structure->parts[$i]->parameters as $object) {
-                    if (strtolower($object->attribute) == 'name') {
-                        $attachments[$i]['is_attachment'] = true;
-                        $attachments[$i]['name'] = UTF8Decoder($object->value);
-                    }
-                }
-            }
-
-            if ($attachments[$i]['is_attachment']) {
-                $attachments[$i]['attachment'] = imap_fetchbody(ImapConnection($Folder), $messageNumber, $i + 1);
-                if ($structure->parts[$i]->encoding == 3) { // 3 = BASE64
-                    $attachments[$i]['attachment'] = base64_decode($attachments[$i]['attachment']);
-                } elseif ($structure->parts[$i]->encoding == 4) { // 4 = QUOTED-PRINTABLE
-                    $attachments[$i]['attachment'] = quoted_printable_decode($attachments[$i]['attachment']);
-                }
-            }
-        }
+        $Attachments = Attachments($structure);
+        dd($Attachments);
     }
 
-
-
-
-
-
-
-    //READ MESSAGE BODY
-    foreach ($flattenedParts as $partNumber => $part) {
-
-        switch ($part->type) {
-
-            case 0:
-                // the HTML or plain text part of the email
-                $message = getPart(ImapConnection($Folder), $messageNumber, $partNumber, $part->encoding);
-                // now do something with the message, e.g. render it
-                break;
-
-            case 1:
-                // multi-part headers, can ignore
-
-                break;
-            case 2:
-                // attached message headers, can ignore
-                break;
-
-            case 3: // application
-            case 4: // audio
-            case 5: // image
-            case 6: // video
-            case 7: // other
-                $filename = getFilenameFromPart($part);
-                if ($filename) {
-                    // it's an attachment
-                    $attachment = getPart(ImapConnection($Folder), $messageNumber, $partNumber, $part->encoding);
-                    // now do something with the attachment, e.g. save it somewhere
-                } else {
-                    // don't know what it is
-                }
-                break;
-        }
-    }
-    return [$message, $attachments];
+    // dd($p, $attachments);
 }
 
 
 
 
-function flattenParts($messageParts, $flattenedParts = array(), $prefix = '', $index = 1, $fullPrefix = true)
+//detect attachments in an email and extract file name
+function Attachments($structure)
 {
-
-    foreach ($messageParts as $part) {
-        $flattenedParts[$prefix . $index] = $part;
-        if (isset($part->parts)) {
-            if ($part->type == 2) {
-                $flattenedParts = flattenParts($part->parts, $flattenedParts, $prefix . $index . '.', 0, false);
-            } elseif ($fullPrefix) {
-                $flattenedParts = flattenParts($part->parts, $flattenedParts, $prefix . $index . '.');
-            } else {
-                $flattenedParts = flattenParts($part->parts, $flattenedParts, $prefix);
-            }
-            unset($flattenedParts[$prefix . $index]->parts);
+    if (property_exists($structure, 'parts')) {
+        foreach ($structure->parts as $subpart) {
+            $result[] = Attachments($subpart);
         }
-        $index++;
+    } else {
+        return $structure->parameters;
     }
-
-    return $flattenedParts;
+    $new_array = flatten_array($result);
+    $result = [];
+    foreach ($new_array as $key => $value) {
+        if (in_array($value->attribute, ['name', 'filename'])) {
+            $result[] = $value;
+        }
+    }
+    return $result;
 }
 
-
-
-
-
-
-
-function getPart($connection, $messageNumber, $partNumber, $encoding)
+function flatten_array(array $old_array)
 {
-
-    $data = imap_fetchbody($connection, $messageNumber, $partNumber);
-    switch ($encoding) {
-        case 0:
-            return $data; // 7BIT
-        case 1:
-            return $data; // 8BIT
-        case 2:
-            return $data; // BINARY
-        case 3:
-            return base64_decode($data); // BASE64
-        case 4:
-            return quoted_printable_decode($data); // QUOTED_PRINTABLE
-        case 5:
-            return $data; // OTHER
-    }
+    $new_array = array();
+    array_walk_recursive($old_array, function ($array) use (&$new_array) {
+        $new_array[] = $array;
+    });
+    return $new_array;
 }
-
-function getFilenameFromPart($part)
-{
-
-    $filename = '';
-
-    if ($part->ifdparameters) {
-        foreach ($part->dparameters as $object) {
-            if (strtolower($object->attribute) == 'filename') {
-                $filename = $object->value;
-            }
-        }
-    }
-
-    if (!$filename && $part->ifparameters) {
-        foreach ($part->parameters as $object) {
-            if (strtolower($object->attribute) == 'name') {
-                $filename = $object->value;
-            }
-        }
-    }
-
-    return UTF8Decoder($filename);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -53,13 +53,19 @@
                                             @if (last(request()->segments()) == 'Sent' || last(request()->segments()) == 'Drafts')
                                                 {{ $Mail->to }}
                                             @else
-                                                {{ $Mail->from }}
+                                                @if (!$Mail->seen)
+                                                    <b>{{ $Mail->from }}</b>
+                                                @else
+                                                    <span style="color: black;">{{ $Mail->from }} </span>
+                                                @endif
                                             @endif
                                         </a></td>
                                     <td class="mailbox-subject">
-                                        <a href="{{ route('ShowMsgbody') }}">
+                                        <a href="{{ route('ShowMsgbody', [$MailboxName, $Mail->uid]) }}">
                                             @if (!$Mail->seen)
-                                                <b>{{ $Mail->subject }}</b>@else{{ $Mail->subject }}
+                                                <b>{{ $Mail->subject }}</b>
+                                            @else
+                                                <span style="color: black;">{{ $Mail->subject }} </span>
                                             @endif
                                         </a>
                                     </td>
