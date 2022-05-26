@@ -529,6 +529,7 @@ function Attachments($structure)
     $result = [];
     foreach ($new_array as $key => $value) {
         if (in_array($value->attribute, ['name', 'filename'])) {
+            $value->value = UTF8Decoder($value->value);
             $result[] = $value;
         }
     }
