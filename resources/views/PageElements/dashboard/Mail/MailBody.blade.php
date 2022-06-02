@@ -1,5 +1,5 @@
 @extends('PageElements.dashboard.Mail.Shared.MailSectionTemplate')
-
+{{-- @dd($MailBody) --}}
 @section('MailContents')
     <div class="col-md-9">
         <div class="box box-primary">
@@ -14,8 +14,9 @@
             <!-- /.box-header -->
             <div class="box-body no-padding">
                 <div class="mailbox-read-info">
-                    <h3>موضوع</h3>
-                    <h5>از: help@example.com
+                    <h3>{{ $MailBody[1] }}</h3> <!-- /subject -->
+                    <h5>از: <span dir="ltr">{{ $MailBody[0] }}</span>
+                        <!-- /from -->
                         <span class="mailbox-read-time pull-left">۳ مرداد ۱۳۹۶ ساعت ۱۴:۳۲</span>
                     </h5>
                 </div>
@@ -34,32 +35,36 @@
                         <i class="fa fa-print"></i></button>
                 </div>
                 <!-- /.mailbox-controls -->
-                <div class="mailbox-read-message">
-                    @php
-                        print_r($MailBody[0]);
-                    @endphp
+                {{-- <div> --}}
+                <div style=" margin: 5px 10px 10px;">
+                    <p style="white-space: pre-line;">
+                        @php
+                            print_r($MailBody[2]);
+                        @endphp
+                    </p>
                 </div>
+                {{-- </div> --}}
                 <!-- /.mailbox-read-message -->
             </div>
             <!-- /.box-body -->
             <div class="box-footer">
                 <ul class="mailbox-attachments clearfix">
-                    @dd($MailBody)
-                    @foreach ($MailBody[1] as $attachment)
-                        @if ($attachment['is_attachment'])
+                    @if (isset($MailBody[3]) && !empty($MailBody[3]))
+                        @foreach ($MailBody[3] as $attachment)
                             <li>
                                 <span class="mailbox-attachment-icon"><i class="fa fa-file-pdf-o"></i></span>
 
                                 <div class="mailbox-attachment-info">
-                                    <a href="#" class="mailbox-attachment-name"><i class="fa fa-paperclip"></i> {{ $attachment['name'] }}</a>
+                                    <a href="#" class="mailbox-attachment-name"><i class="fa fa-paperclip"></i> {{ $attachment['Name'] }}</a>
                                     <span class="mailbox-attachment-size">
                                         1,245 KB
                                         <a href="#" class="btn btn-default btn-xs pull-left"><i class="fa fa-cloud-download"></i></a>
                                     </span>
                                 </div>
                             </li>
-                        @endif
-                    @endforeach
+                        @endforeach
+                    @endif
+
                     {{-- <li>
                         <span class="mailbox-attachment-icon"><i class="fa fa-file-pdf-o"></i></span>
 

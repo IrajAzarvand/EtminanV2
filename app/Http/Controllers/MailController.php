@@ -50,7 +50,6 @@ class MailController extends Controller
         $MailBody = ReadMailBody($Folder, $Msg_uid);
 
 
-
         $Name = Menu('ShowEmailPage')[0];
         $Section = Menu('ShowEmailPage')[1];
         return view(

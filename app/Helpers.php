@@ -2,11 +2,14 @@
 
 use Carbon\Carbon;
 use App\Models\Ptype;
+use Dflydev\DotAccessData\Data;
 use Illuminate\Support\Arr;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use PhpParser\Node\Stmt\Break_;
 use SebastianBergmann\Type\TypeName;
+use Symfony\Component\VarDumper\VarDumper;
 
 /**
  *
@@ -458,92 +461,203 @@ function UserMail($Folder)
     }
 
     $MailBox = paginate($MailBox, 20);
-    DetectMailAttachments($MailBox, $Folder);
+
+    // check if each mail has attachment or no.
+    foreach ($MailBox as $mail) {
+        $mail->MailHasAttachment = 0;
+        $msgno = imap_msgno(ImapConnection($Folder), $mail->uid);
+        $structure = imap_fetchstructure(ImapConnection($Folder), $msgno);
+
+        if (Attachments($structure) !== []) {
+            $mail->MailHasAttachment = 1;
+        }
+    }
 
     return $MailBox;
 }
 
-//check each message if it has attachments or no
-function DetectMailAttachments($Emails, $Folder)
-{
-
-    foreach ($Emails as $id => $message) {
-        $message->MailHasAttachment = 0;
-        $msgno = imap_msgno(ImapConnection($Folder), $message->uid);
-        $structure = imap_fetchstructure(ImapConnection($Folder), $msgno);
-        if (isset($structure->parts) && count($structure->parts)) {
-            for ($i = 0; $i < count($structure->parts); $i++) {
-                if ($structure->parts[$i]->ifdparameters) {
-                    foreach ($structure->parts[$i]->dparameters as $object) {
-                        if (strtolower($object->attribute) == 'filename') {
-                            //file has attachments
-                            $message->MailHasAttachment = 1;
-                        }
-                    }
-                }
-
-                if ($structure->parts[$i]->ifparameters) {
-                    foreach ($structure->parts[$i]->parameters as $object) {
-                        if (strtolower($object->attribute) == 'name') {
-                            //file has attachments
-                            $message->MailHasAttachment = 1;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
 
 
 function ReadMailBody($Folder, $Msg_Uid)
 {
     $MessageNumber = imap_msgno(ImapConnection($Folder), $Msg_Uid);
+    // $saveToPath = storage_path() . '/AttachmentDownloads/';
+    // $xa = new exAttach($Folder, $MessageNumber, $saveToPath);
+    // $xa->get_files($MessageNumber, $saveToPath);
+
+
     $structure = imap_fetchstructure(ImapConnection($Folder), $MessageNumber);
+    //gather header info
+    $HeaderInfo = imap_headerinfo(ImapConnection($Folder), $MessageNumber);
+    $HeaderInfo->Subject ? $Subject = UTF8Decoder($HeaderInfo->Subject) : UTF8Decoder($HeaderInfo->subject);
+    $HeaderInfo->fromaddress ? $From = UTF8Decoder($HeaderInfo->fromaddress) : UTF8Decoder($HeaderInfo->reply_toaddress);
+    $Attachments = [];
+    //**************************************************************** */
+    //get mail attachments
+    // $Attachments = '';
+    // if (isset($structure->parts) && count($structure->parts)) {
+    //     $Attachments = Attachments($structure);
+    // }
+    //******************************************************************** */
 
-    $imap = ImapConnection($Folder);
+    // read mail body
+    if (!empty($structure->parts)) {
+        //==============================================================
+        $flattenedParts = flattenParts($structure->parts);
+        $i = 0;
+        foreach ($flattenedParts as $partNumber => $part) {
+            switch ($part->type) {
 
-
-    if (isset($structure->parts) && count($structure->parts)) {
-        $Attachments = Attachments($structure);
-        dd($Attachments);
+                case 0:
+                    // the HTML or plain text part of the email
+                    $MessageBody = getPart(ImapConnection($Folder), $MessageNumber, $partNumber, $part->encoding);
+                    break;
+                case 3: // application
+                case 4: // audio
+                case 5: // image
+                case 6: // video
+                case 7: // other
+                    if ((property_exists($part, 'disposition') && strtolower($part->disposition) == 'attachment') && ($part->parameters && $part->parameters !== [])) {
+                        $Attachments[$i]['Name'] = UTF8Decoder($part->parameters[0]->value);
+                        $Attachments[$i]['Content'] = getPart(ImapConnection($Folder), $MessageNumber, $partNumber, $part->encoding);
+                        $i++;
+                    }
+                    break;
+            }
+        }
+    } else {
+        //mail without parts
+        switch ($structure->encoding) {
+            case 0:
+                $MessageBody = imap_body(ImapConnection($Folder), $MessageNumber); // 7BIT
+                break;
+            case 1:
+                $MessageBody = imap_body(ImapConnection($Folder), $MessageNumber); // 8BIT
+                break;
+            case 2:
+                $MessageBody = imap_body(ImapConnection($Folder), $MessageNumber); // BINARY
+                break;
+            case 3:
+                $MessageBody = base64_decode(imap_body(ImapConnection($Folder), $MessageNumber)); // BASE64
+                break;
+            case 4:
+                $MessageBody = imap_qprint(imap_body(ImapConnection($Folder), $MessageNumber)); // QUOTED_PRINTABLE
+                break;
+            case 5:
+                $MessageBody = imap_body(ImapConnection($Folder), $MessageNumber); // OTHER
+                break;
+        }
     }
 
-    // dd($p, $attachments);
+    dd($Attachments);
+    return [$From, $Subject, $MessageBody, $Attachments];
 }
+
+
+//==============================================================
+
+
+function flattenParts($messageParts, $flattenedParts = array(), $prefix = '', $index = 1, $fullPrefix = true)
+{
+    foreach ($messageParts as $part) {
+        $flattenedParts[$prefix . $index] = $part;
+        if (isset($part->parts)) {
+            if ($part->type == 2) {
+                $flattenedParts = flattenParts($part->parts, $flattenedParts, $prefix . $index . '.', 0, false);
+            } elseif ($fullPrefix) {
+                $flattenedParts = flattenParts($part->parts, $flattenedParts, $prefix . $index . '.');
+            } else {
+                $flattenedParts = flattenParts($part->parts, $flattenedParts, $prefix);
+            }
+            unset($flattenedParts[$prefix . $index]->parts);
+        }
+        $index++;
+    }
+
+    return $flattenedParts;
+}
+
+
+
+
+function getPart($connection, $messageNumber, $partNumber, $encoding)
+{
+
+    $data = imap_fetchbody($connection, $messageNumber, $partNumber);
+
+    switch ($encoding) {
+        case 0:
+            return $data; // 7BIT
+        case 1:
+            return $data; // 8BIT
+        case 2:
+            return $data; // BINARY
+        case 3:
+            return base64_decode($data); // BASE64
+        case 4:
+            return quoted_printable_decode($data); // QUOTED_PRINTABLE
+        case 5:
+            return $data; // OTHER
+    }
+}
+
+
+
 
 
 
 
 //detect attachments in an email and extract file name
+//=====================================================
 function Attachments($structure)
 {
+
+    $result = [];
     if (property_exists($structure, 'parts')) {
         foreach ($structure->parts as $subpart) {
             $result[] = Attachments($subpart);
         }
     } else {
-        return $structure->parameters;
-    }
-    $new_array = flatten_array($result);
-    $result = [];
-    foreach ($new_array as $key => $value) {
-        if (in_array($value->attribute, ['name', 'filename'])) {
-            $value->value = UTF8Decoder($value->value);
-            $result[] = $value;
+        if ((property_exists($structure, 'disposition') && strtolower($structure->disposition) == 'attachment') && ($structure->parameters && $structure->parameters !== [])) {
+
+            foreach ($structure->parameters as $param) {
+                if (property_exists($param, 'attribute') && in_array($param->attribute, ['name', 'filename'])) {
+                    return $param->value;
+                }
+            }
         }
     }
-    return $result;
+
+
+    //flatten the result array and remove empty elements
+    $filenames = [];
+    array_walk_recursive($result, function ($array) use (&$filenames) {
+        $filenames[] = $array;
+    });
+
+    return $filenames;
 }
 
-function flatten_array(array $old_array)
+
+/**
+ *  creates a file from an attachment and stores path for any zip files
+ *  @param array $attachment holds all the info for the attachment
+ */
+function DownloadSelectedAttachment($attachment)
 {
-    $new_array = array();
-    array_walk_recursive($old_array, function ($array) use (&$new_array) {
-        $new_array[] = $array;
-    });
-    return $new_array;
+    $TempDownloadPath = storage_path() . '/AttachmentDownloads/';
+    $filename = $attachment['name'];
+    if (empty($filename)) $filename = $attachment['filename'];
+    if (empty($filename)) $filename = time() . ".dat";
+    $location = $TempDownloadPath . $filename;
+
+    $fp = fopen($location, "w+");
+    fwrite($fp, $attachment['attachment']);
+    fclose($fp);
 }
+
+//=====================================================
+//end of attachments section
 
 
 
@@ -745,5 +859,180 @@ class persian_date
         return $gregorian_date[0] .
             '-' . $gregorian_date[1] .
             '-' . $gregorian_date[2];
+    }
+}
+
+
+
+
+//==============×××××××××××××××××××××××××××××==================================================
+
+class exAttach
+{
+
+    private $imap;
+    /**
+     *  The identifier of the email targeted
+     *  @var int
+     */
+    private $emailNumber;
+    /**
+     *  Attachments array
+     *  @var array
+     */
+    private $attachments;
+    /**
+     *  Message structure object
+     *  @var object
+     */
+    private $structure;
+    /**
+     *  The 'save to' path
+     *  @var string
+     */
+    private $path;
+    /**
+     *  An array of zip files and their locations ($path)
+     *  @var array
+     */
+    private $zips;
+    /**
+     *  Create the IMAP stream
+     *  @param string $hostname the 'mailbox'
+     *  @param string $username the user's email address
+     *  @param string $password the user's password for the account
+     */
+    public function __construct($Folder, $MailNumber, $SavePath)
+    {
+        $this->imap = ImapConnection($Folder);
+        $this->emailNumber = $MailNumber;
+        $this->path = $SavePath;
+    }
+
+    /**
+     *  create files from attachments in a specified directory
+     *  @param array $searchArray an array of keyed parameters
+     *  @param string $saveToPath path of where to create files [must end with a /]
+     */
+    public function get_files($saveToPath = NULL)
+    {
+
+        $overview = imap_fetch_overview($this->imap, $this->emailNumber, 0);
+        $this->structure = imap_fetchstructure($this->imap, $this->emailNumber);
+
+        $this->attachments = array();
+
+        if (isset($this->structure->parts) && count($this->structure->parts)) {
+            for ($i = 0; $i < count($this->structure->parts); $i++) {
+                $this->create_new_array($i);
+
+                if ($this->structure->parts[$i]->ifdparameters) {
+                    $this->check_ifdparams($i);
+                }
+
+                if ($this->structure->parts[$i]->ifparameters) {
+                    $this->check_ifparams($i);
+                }
+
+                if ($this->attachments[$i]['is_attachment']) {
+
+                    $this->get_file_content($i);
+                }
+            }
+
+            foreach ($this->attachments as $attachment) {
+                if ($attachment['is_attachment'] == 1) {
+
+                    $this->make_file($attachment);
+                }
+            }
+        }
+
+        imap_close($this->imap);
+    }
+    /**
+     *  extract any files in a zip archive to a specified location
+     *  @param string $unzipDest the path for the extraction [must end with a /]
+     */
+    public function extract_zip_to($unzipDest = NULL)
+    {
+        $zip = new ZipArchive;
+        foreach ($this->zips as $zipfile) {
+            $res = $zip->open($zipfile);
+            if ($res === TRUE) {
+                $zip->extractTo($unzipDest);
+                $zip->close();
+            }
+        }
+    }
+    /**
+     *  creates a file from an attachment and stores path for any zip files
+     *  @param array $attachment holds all the info for the attachment
+     */
+    private function make_file($attachment)
+    {
+        $filename = $attachment['name'];
+        if (empty($filename)) $filename = $attachment['filename'];
+        if (empty($filename)) $filename = time() . ".dat";
+        $location = $this->path . $filename;
+
+        if (strtolower(pathinfo($filename, PATHINFO_EXTENSION)) == 'zip') $this->zips[] = $location;
+
+        $fp = fopen($location, "w+");
+        fwrite($fp, $attachment['attachment']);
+        fclose($fp);
+    }
+    /**
+     *  extracts attachment concents and encodes it accordingly
+     *  @param int $i the counter for attachments
+     */
+    private function get_file_content($i)
+    {
+        $this->attachments[$i]['attachment'] = imap_fetchbody($this->imap, $this->emailNumber, $i + 1);
+        if ($this->structure->parts[$i]->encoding == 3) {
+            $this->attachments[$i]['attachment'] = base64_decode($this->attachments[$i]['attachment']);
+        } elseif ($this->structure->parts[$i]->encoding == 4) {
+        } elseif ($this->structure->parts[$i]->encoding == 4) {
+            $this->attachments[$i]['attachment'] = quoted_printable_decode($this->attachments[$i]['attachment']);
+        }
+    }
+    /**
+     *  checks ifdparameters object
+     *  @param int $i the counter for attachments
+     */
+    private function check_ifdparams($i)
+    {
+        foreach ($this->structure->parts[$i]->dparameters as $object) {
+            if (strtolower($object->attribute) == 'filename') {
+                $this->attachments[$i]['is_attachment'] = true;
+                $this->attachments[$i]['filename'] = $object->value;
+            }
+        }
+    }
+    /**
+     *  checks ifparameters object
+     *  @param int $i the counter for attachments
+     */
+    private function check_ifparams($i)
+    {
+        foreach ($this->structure->parts[$i]->parameters as $object) {
+            if (strtolower($object->attribute) == 'name') {
+                $this->attachments[$i]['is_attachment'] = true;
+                $this->attachments[$i]['name'] = $object->value;
+            }
+        }
+    }
+    /**
+     *  creates an empty array with default values for an attachment
+     *  @param int $i the counter for attachments
+     */
+    private function create_new_array($i)
+    {
+        $this->attachments[$i] = array(
+            'is_attachment' => false,
+            'filename' => '',
+            'name' => '',
+            'attachment' => ''
+        );
     }
 }
