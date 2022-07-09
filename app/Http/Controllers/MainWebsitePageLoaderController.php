@@ -324,7 +324,7 @@ class MainWebsitePageLoaderController extends Controller
         }
 
         //get 4 related product that match same ptype_id with selected product
-        $RP = Product::where('ptype_id', $SelectedProduct->ptype_id)->whereNotIn('id', array($product_id))->with('contents')->orderBy('id', 'desc')->take(4)->get();
+        $RP = Product::where('ptype_id', $SelectedProduct->ptype_id)->whereNotIn('id', array($product_id))->with('contents')->inRandomOrder()->take(4)->get();
         //Related Products
         if ($RP) {
             $RelatedProducts = [];
