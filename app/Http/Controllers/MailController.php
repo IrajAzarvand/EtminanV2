@@ -49,13 +49,29 @@ class MailController extends Controller
 
         $MailBody = ReadMailBody($Folder, $Msg_uid);
 
-
         $Name = Menu('ShowEmailPage')[0];
         $Section = Menu('ShowEmailPage')[1];
         return view(
             'PageElements.dashboard.Mail.MailBody',
             compact('Name', 'Section', 'MailboxName', 'Msg_uid', 'MailBody')
         );
+    }
+
+
+
+
+
+
+    /**
+     * Display selected mailbox by user.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function DownloadAttachment($Folder, $MsgNumber, $FileName)
+    {
+
+        $File = DownloadSelectedAttachment($Folder, $MsgNumber, $FileName);
+        dd($File);
     }
 
 

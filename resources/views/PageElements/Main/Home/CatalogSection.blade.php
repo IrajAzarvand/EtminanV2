@@ -17,9 +17,9 @@
                 <div class="col-md-6">
                     <div class="all-light text-left pt-lg-210 pt-50 pb-lg-210 pb-50">
                         <h4 class="font__family-montserrat font__weight-medium font__size-24 line__height-32 text-uppercase highlight-underline mt-0 show-inline-block text-middle">
-                            <span class="before wow fadeInUp"></span>Start with us right now
+                            <span class="before wow fadeInUp"></span>{{ Dictionary()['ViewCatalog'][app()->getLocale()] }}
                         </h4>
-                        <a href="#" class="btn btn-sm btn-simple border-radius-50 ml-30 mt-1">
+                        <a href="{{ route('ViewCatalog') }}" class="btn btn-sm btn-simple border-radius-50 ml-30 mt-1">
                             <i class="icon-inside icon-inline fa fa-angle-right font__size-24 mr-0" aria-hidden="true"></i>
                         </a>
                     </div>

@@ -27,9 +27,7 @@
             @include('PageElements.dashboard.Shared.TopBar')
 
         </header>
-
         @include('PageElements.dashboard.Shared.Menus')
-
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <!-- Content Header (Page header) -->

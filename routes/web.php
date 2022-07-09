@@ -72,6 +72,12 @@ Route::post('/SendCUMessage', [MailController::class, 'SendCUMessage'])->name('S
 
 
 
+//=======================================================================
+//Catalog
+Route::get('/Catalog', [MainWebsitePageLoaderController::class, 'Catalog'])->name('ViewCatalog');
+
+
+
 
 //Dashboard Routes
 //=======================================================================
@@ -186,4 +192,5 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
     //EMail
     Route::get('/Email/Mailbox/{Folder?}', [MailController::class, 'index'])->name('ShowEmailPage');
     Route::get('/Email/showMsgBody/{Folder?}/{Msg_uid?}', [MailController::class, 'MailBody'])->name('ShowMsgbody');
+    Route::get('/Email/DownloadAttachment/{Folder?}/{MsgNumber?}/{FileName?}', [MailController::class, 'DownloadAttachment'])->name('DownloadAttachment');
 });

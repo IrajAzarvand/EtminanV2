@@ -15,7 +15,7 @@
     </div>
 
 
-    {{-- @include('PageElements.Main.Home.CatalogSection') --}}
+    @include('PageElements.Main.Home.CatalogSection')
     @include('PageElements.Main.Home.GallerySection')
     @include('PageElements.Main.Home.CertificateSection')
     @include('PageElements.Main.Home.EventsSection')

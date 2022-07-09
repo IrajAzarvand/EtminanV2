@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Catalog;
 use App\Models\Event;
 use App\Models\Flavor;
 use App\Models\Gallery;
@@ -447,5 +448,13 @@ class MainWebsitePageLoaderController extends Controller
         }
 
         return view('PageElements.Main.Shared.SubPage.SubPage', compact('GItems'));
+    }
+
+
+    // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+    // Catalog
+    public function Catalog()
+    {
+        return view('PageElements.Main.Catalog.catalog');
     }
 }

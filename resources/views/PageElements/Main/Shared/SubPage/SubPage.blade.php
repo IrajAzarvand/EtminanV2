@@ -12,5 +12,7 @@
         @include('PageElements.Main.Products.RelatedProducts')
     @elseif (isset($GItems))
         @include('PageElements.Main.Gallery.Gallery')
+    @elseif (isset($CatalogItem))
+        @include('PageElements.Main.Catalog.Catalog')
     @endif
 @endsection

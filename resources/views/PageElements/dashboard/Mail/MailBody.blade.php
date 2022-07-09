@@ -55,60 +55,15 @@
                                 <span class="mailbox-attachment-icon"><i class="fa fa-file-pdf-o"></i></span>
 
                                 <div class="mailbox-attachment-info">
-                                    <a href="#" class="mailbox-attachment-name"><i class="fa fa-paperclip"></i> {{ $attachment['Name'] }}</a>
+                                    <a href="{{ route('DownloadAttachment', [$MailBody[4], $MailBody[5], $attachment]) }}" class="mailbox-attachment-name"><i class="fa fa-paperclip"></i> {{ $attachment }}</a>
                                     <span class="mailbox-attachment-size">
                                         1,245 KB
-                                        <a href="#" class="btn btn-default btn-xs pull-left"><i class="fa fa-cloud-download"></i></a>
+                                        <a href="{{ route('DownloadAttachment', [$MailBody[4], $MailBody[5], $attachment]) }}" class="btn btn-default btn-xs pull-left"><i class="fa fa-cloud-download"></i></a>
                                     </span>
                                 </div>
                             </li>
                         @endforeach
                     @endif
-
-                    {{-- <li>
-                        <span class="mailbox-attachment-icon"><i class="fa fa-file-pdf-o"></i></span>
-
-                        <div class="mailbox-attachment-info">
-                            <a href="#" class="mailbox-attachment-name"><i class="fa fa-paperclip"></i> Sep2014-report.pdf</a>
-                            <span class="mailbox-attachment-size">
-                                1,245 KB
-                                <a href="#" class="btn btn-default btn-xs pull-left"><i class="fa fa-cloud-download"></i></a>
-                            </span>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="mailbox-attachment-icon"><i class="fa fa-file-word-o"></i></span>
-
-                        <div class="mailbox-attachment-info">
-                            <a href="#" class="mailbox-attachment-name"><i class="fa fa-paperclip"></i> App Description.docx</a>
-                            <span class="mailbox-attachment-size">
-                                1,245 KB
-                                <a href="#" class="btn btn-default btn-xs pull-left"><i class="fa fa-cloud-download"></i></a>
-                            </span>
-                        </div>
-                    </li> --}}
-                    {{-- <li>
-                        <span class="mailbox-attachment-icon has-img"><img src="../../dist/img/photo1.png" alt="Attachment"></span>
-
-                        <div class="mailbox-attachment-info">
-                            <a href="#" class="mailbox-attachment-name"><i class="fa fa-camera"></i> photo1.png</a>
-                            <span class="mailbox-attachment-size">
-                                2.67 MB
-                                <a href="#" class="btn btn-default btn-xs pull-left"><i class="fa fa-cloud-download"></i></a>
-                            </span>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="mailbox-attachment-icon has-img"><img src="../../dist/img/photo2.png" alt="Attachment"></span>
-
-                        <div class="mailbox-attachment-info">
-                            <a href="#" class="mailbox-attachment-name"><i class="fa fa-camera"></i> photo2.png</a>
-                            <span class="mailbox-attachment-size">
-                                1.9 MB
-                                <a href="#" class="btn btn-default btn-xs pull-left"><i class="fa fa-cloud-download"></i></a>
-                            </span>
-                        </div>
-                    </li> --}}
                 </ul>
             </div>
             <!-- /.box-footer -->
