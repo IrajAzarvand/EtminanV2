@@ -116,10 +116,10 @@ function MainNav()
         ],
 
         'SalesOffices' => [
-            'FA' => 'دفاتر فروش',
-            'EN' => 'Sales Offices',
-            'RU' => 'Офисы продаж',
-            'AR' => 'مكاتب المبيعات',
+            'FA' => 'شعب فروش',
+            'EN' => 'Sales branches',
+            'RU' => 'Филиалы продаж',
+            'AR' => 'فروع المبيعات',
             'route' => 'SalesOffices',
         ],
 
@@ -302,10 +302,10 @@ function Dictionary()
             'AR' => 'إرسال',
         ],
         'SalesOffices' => [
-            'FA' => 'دفاتر فروش',
-            'EN' => 'Sales Offices',
-            'RU' => 'Офисы продаж',
-            'AR' => 'مكاتب المبيعات',
+            'FA' => 'شعب فروش',
+            'EN' => 'Sales branches',
+            'RU' => 'Филиалы продаж',
+            'AR' => 'فروع المبيعات',
         ],
         'More' => [
             'FA' => 'بیشتر',
